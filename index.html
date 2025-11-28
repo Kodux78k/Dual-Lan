@@ -1,1135 +1,1517 @@
 <!DOCTYPE html>
+<!-- MOBILE-FIRST · DUAL.INFODOSE · HOME DO DIA -->
 <html lang="pt-BR">
 <head>
-   <link rel="manifest" href="./manifest.webmanifest"> 
   <meta charset="UTF-8" />
-  <title>Dual.Infodose · Ativações e Markdown</title>
+  <title>Dual.Infodose · Home do Dia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      /* Nebula Pro + Base Madeira */
-      --bg-main: radial-gradient(circle at top, #2c174d 0%, #060716 45%, #020309 100%);
-      --card-bg: rgba(8, 10, 25, 0.96);
-      --card-bg-soft: rgba(10, 13, 35, 0.96);
-      --glass: rgba(18, 23, 55, 0.68);
-      --border-soft: rgba(145, 166, 255, 0.35);
-      --border-strong: rgba(199, 212, 255, 0.85);
-
-      --accent-main: #8f7bff;
-      --accent-strong: #00f6ff;
+      /* Temas dinâmicos (valores serão sobrescritos via JS) */
+      --bg-main: radial-gradient(circle at top, #141429 0%, #050715 45%, #020309 100%);
+      --bg-overlay: radial-gradient(circle at 75% 15%, #ffb45b 0%, #ff8d36 22%, transparent 65%);
+      --accent-main: #ff8d36;
       --accent-warm: #ffb45b;
+      --accent-cold: #00f6ff;
 
-      --madeira: #b57a43;
-      --madeira-deep: #5f3d23;
+      --card-bg: rgba(8, 10, 25, 0.96);
+      --card-soft: rgba(13, 17, 40, 0.96);
+      --border-soft: rgba(145, 166, 255, 0.45);
+      --text-main: #fdfdff;
+      --text-soft: #c6c9ff;
+      --text-muted: #7b81a8;
 
-      --text-main: #f5f5ff;
-      --text-soft: #a9b0d9;
-      --text-muted: #767ea7;
-
-      --radius-xl: 26px;
+      --radius-xl: 28px;
       --radius-lg: 20px;
-      --radius-md: 14px;
-
-      --shadow-soft: 0 18px 55px rgba(0, 0, 0, 0.88);
-      --shadow-small: 0 10px 32px rgba(0, 0, 0, 0.75);
-      --transition-fast: 0.18s ease-out;
-      --transition-med: 0.28s ease-out;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.78);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Inter", sans-serif;
-      color: var(--text-main);
-      background: #02020a;
-      -webkit-font-smoothing: antialiased;
-    }
+    * { box-sizing: border-box; }
 
     body {
+      margin: 0;
       min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        Roboto, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background: var(--bg-main);
       display: flex;
       justify-content: center;
       align-items: stretch;
-      background-image: var(--bg-main);
-      background-attachment: fixed;
-      background-size: cover;
-      padding: 18px 14px 28px;
-    }
-
-    .app-shell {
-      width: 100%;
-      max-width: 1120px;
-      margin: auto;
-      border-radius: 32px;
-      padding: 18px 14px 24px;
-      background: linear-gradient(
-          135deg,
-          rgba(143, 123, 255, 0.18),
-          rgba(0, 246, 255, 0.08)
-        )
-        border-box;
-      border: 1px solid rgba(155, 175, 255, 0.4);
-      box-shadow: var(--shadow-soft);
       position: relative;
       overflow: hidden;
     }
 
-    .app-shell::before {
+    /* Passagem de tempo */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: var(--bg-overlay);
+      opacity: 0;
+      pointer-events: none;
+      animation: dawnFade 1.6s ease-out 0.12s forwards;
+    }
+
+    @keyframes dawnFade {
+      0%   { opacity: 0; filter: blur(14px); }
+      40%  { opacity: 0.6; filter: blur(7px); }
+      100% { opacity: 1; filter: blur(0); }
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 18px 16px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.75s ease-out 0.18s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-button {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(153, 175, 255, 0.7);
+      background: rgba(8, 10, 30, 0.96);
+      color: var(--text-soft);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.85);
+    }
+
+    .logo-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .logo-title span:nth-child(1) {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .logo-title span:nth-child(2) {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-soft);
+    }
+
+    .mode-toggle {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 4px 10px 4px 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-soft);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0, 246, 255, 0.35), transparent 60%),
+        rgba(4, 8, 28, 0.92);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .mode-toggle:hover { transform: translateY(-1px); }
+
+    .mode-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-cold));
+      box-shadow: 0 0 10px rgba(0, 246, 255, 0.85);
+    }
+
+    body.voice-on .mode-toggle {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255, 180, 91, 0.55), transparent 60%),
+        rgba(10, 14, 46, 0.98);
+      border-color: rgba(255, 180, 91, 0.9);
+    }
+
+    body.voice-on .mode-dot {
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-warm));
+      box-shadow: 0 0 14px rgba(255, 180, 91, 0.98);
+    }
+
+    /* Saudação */
+    .greeting-card {
+      background: linear-gradient(135deg, rgba(22, 28, 70, 0.98), rgba(8, 12, 35, 0.98));
+      border-radius: var(--radius-xl);
+      padding: 18px 18px 22px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(153, 175, 255, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .greeting-card::before {
       content: "";
       position: absolute;
       inset: -40%;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(99, 64, 255, 0.16) 0, transparent 55%),
-        radial-gradient(circle at 85% 0%, rgba(0, 246, 255, 0.14) 0, transparent 50%),
-        radial-gradient(circle at 50% 95%, rgba(255, 180, 91, 0.13) 0, transparent 55%);
-      opacity: 0.85;
+      background: radial-gradient(circle at 85% 10%, rgba(255, 149, 75, 0.28), transparent 55%);
+      opacity: 0.9;
       pointer-events: none;
-      mix-blend-mode: screen;
     }
 
-    .app-inner {
+    .greeting-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 12px;
       position: relative;
       z-index: 1;
     }
 
-    header.app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 6px 6px 10px;
+    .greeting-window {
+      font-weight: 500;
+      letter-spacing: 0.08em;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-orb {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: conic-gradient(from 220deg, #ff8a5c, #ff5ce1, #7b8cff, #00f6ff, #ff8a5c);
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.75),
-        0 0 28px rgba(139, 120, 255, 0.75);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .greeting-main {
+      margin-top: 10px;
       position: relative;
+      z-index: 1;
     }
 
-    .brand-orb::after {
-      content: "";
-      width: 58%;
-      height: 58%;
-      border-radius: inherit;
-      background: radial-gradient(circle at 35% 25%, #fff, transparent 55%),
-        radial-gradient(circle at 60% 70%, rgba(0, 0, 0, 0.8), transparent 70%);
-      mix-blend-mode: screen;
-      opacity: 0.9;
+    .greeting-title {
+      font-size: 26px;
+      letter-spacing: 0.02em;
+      font-weight: 650;
     }
 
-    .brand-text h1 {
-      font-size: 1.05rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin: 0 0 2px;
+    .greeting-subtitle {
+      margin-top: 4px;
+      font-size: 14px;
+      color: var(--accent-warm);
     }
 
-    .brand-text p {
-      margin: 0;
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .pill {
-      font-size: 0.72rem;
-      padding: 6px 10px;
+    .voice-spectrum {
+      margin: 14px 4px 0;
+      height: 4px;
       border-radius: 999px;
-      border: 1px solid rgba(168, 186, 255, 0.45);
-      color: var(--text-soft);
-      background: radial-gradient(circle at top, #18213c, #080b1a);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.7);
-    }
-
-    .pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent-strong);
-      box-shadow: 0 0 16px rgba(0, 246, 255, 0.9);
-    }
-
-    .nav-tabs {
-      display: inline-flex;
-      padding: 3px;
-      border-radius: 999px;
-      background: rgba(7, 10, 25, 0.85);
-      border: 1px solid rgba(144, 165, 255, 0.45);
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.7);
-    }
-
-    .nav-tab {
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.72rem;
-      padding: 7px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: background var(--transition-med), color var(--transition-med),
-        box-shadow var(--transition-med);
-    }
-
-    .nav-tab.active {
-      background: radial-gradient(circle at top, #8f7bff, #353864);
-      color: #fdfbff;
-      box-shadow: 0 0 0 1px rgba(199, 212, 255, 0.35),
-        0 12px 26px rgba(65, 83, 185, 0.9);
-    }
-
-    /* MAIN LAYOUT */
-
-    main {
-      margin-top: 12px;
-    }
-
-    .screen {
-      display: none;
-      animation: fadeInUp 0.32s ease-out;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* DASHBOARD (CARDS GRID) */
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1.05fr;
-      grid-template-rows: auto auto;
-      gap: 16px;
-    }
-
-    .grid-left {
-      display: grid;
-      grid-template-rows: minmax(0, 1.4fr) minmax(0, 1.1fr);
-      gap: 16px;
-    }
-
-    .grid-right {
-      display: grid;
-      grid-template-rows: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      border-radius: var(--radius-xl);
-      background: radial-gradient(circle at 0% 0%, rgba(143, 123, 255, 0.2), transparent 60%),
-        radial-gradient(circle at 120% 120%, rgba(0, 246, 255, 0.05), transparent 50%),
-        var(--card-bg);
-      border: 1px solid rgba(138, 159, 255, 0.32);
-      padding: 16px 16px 18px;
-      box-shadow: var(--shadow-small);
+      background: linear-gradient(90deg, #00f6ff, #8f7bff, #ffb45b, #ff5b7a);
+      opacity: 0.4;
       position: relative;
       overflow: hidden;
     }
 
-    .card::before {
+    .voice-spectrum::before {
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.09), transparent 55%);
-      mix-blend-mode: soft-light;
-      pointer-events: none;
-      opacity: 0.76;
+      background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.1));
+      transform: translateX(-100%);
+      animation: sweep 2.2s linear infinite;
+      opacity: 0;
     }
 
-    .card-inner {
+    @keyframes sweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    body.voice-on .voice-spectrum { opacity: 1; }
+    body.voice-on .voice-spectrum::before { opacity: 1; }
+
+    .time-block {
+      margin-top: 14px;
+      padding: 10px 4px 0;
       position: relative;
       z-index: 1;
     }
 
-    .card-title-row {
+    .time-labels {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .card-title {
-      font-size: 0.75rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+      font-size: 11px;
       color: var(--text-muted);
+      margin-bottom: 6px;
     }
 
-    .card-title.main-title {
-      font-size: 0.8rem;
-      letter-spacing: 0.18em;
-    }
-
-    .card-chevron {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .card-hero-title {
-      font-size: 1.18rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      margin: 4px 0 2px;
-    }
-
-    .card-subtitle {
-      font-size: 0.76rem;
-      color: var(--text-soft);
-      margin-bottom: 12px;
-    }
-
-    .code-preview {
-      border-radius: var(--radius-lg);
-      border: 1px dashed rgba(185, 197, 255, 0.75);
-      background: rgba(5, 6, 18, 0.98);
-      padding: 11px 12px 10px;
-      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono",
-        "Courier New", monospace;
-      font-size: 0.76rem;
-      line-height: 1.4;
-      color: #f4f4ff;
-      position: relative;
-      margin-bottom: 10px;
-    }
-
-    .code-preview small {
-      position: absolute;
-      top: 6px;
-      right: 9px;
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .primary-btn,
-    .secondary-btn,
-    .ghost-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 9px 14px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      border: none;
-      cursor: pointer;
-      transition: transform var(--transition-fast),
-        box-shadow var(--transition-fast), background var(--transition-fast),
-        border-color var(--transition-fast), color var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .primary-btn {
-      background: linear-gradient(135deg, #23d366, #1bbf4f);
-      color: #021008;
-      box-shadow: 0 12px 24px rgba(15, 210, 104, 0.75);
-    }
-
-    .primary-btn .icon {
-      font-size: 1rem;
-    }
-
-    .secondary-btn {
-      background: radial-gradient(circle, #18213c, #080b1a);
-      color: var(--text-soft);
-      border: 1px solid rgba(147, 166, 255, 0.6);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
-    }
-
-    .ghost-btn {
-      background: transparent;
-      border: 1px dashed rgba(138, 159, 255, 0.85);
-      color: var(--text-soft);
-      padding-inline: 10px;
-      font-size: 0.70rem;
-    }
-
-    .primary-btn:hover,
-    .secondary-btn:hover,
-    .ghost-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.9);
-    }
-
-    .primary-btn:active,
-    .secondary-btn:active,
-    .ghost-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.85);
-    }
-
-    .card-footer {
-      margin-top: 12px;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .tag-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .theme-pill {
-      flex: 1;
-      min-width: 0;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(178, 191, 255, 0.6);
-      color: #fefefe;
-      font-size: 0.78rem;
+    .time-labels span:nth-child(2) {
+      color: var(--accent-warm);
       font-weight: 500;
-      background:
-        radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.45), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(0, 246, 255, 0.22), transparent 55%),
-        rgba(9, 12, 32, 0.96);
-      display: inline-flex;
+    }
+
+    .time-slider-wrapper {
+      position: relative;
+      height: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-cold), var(--accent-warm));
+      border-radius: 999px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-warm));
+      box-shadow: 0 0 14px rgba(255, 180, 91, 0.9);
+      border: 2px solid rgba(10, 14, 41, 0.9);
+      cursor: pointer;
+      margin-top: -8px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-warm));
+      border: 2px solid rgba(10, 14, 41, 0.9);
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(255, 180, 91, 0.9);
+    }
+
+    /* Cards principais */
+    .main-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    details.action-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(102, 122, 200, 0.55);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+      transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    details.action-card[open] {
+      border-color: rgba(255, 180, 91, 0.9);
+      background: radial-gradient(circle at 10% 0%, rgba(255, 180, 91, 0.15), rgba(5, 8, 28, 0.98));
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.92);
+    }
+
+    details.action-card > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      font-size: 15px;
+    }
+
+    details.action-card > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.action-card span.label-strong {
+      color: var(--accent-main);
+    }
+
+    .action-card-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
+      color: #ffeedb;
+      background: radial-gradient(circle at 30% 20%, #ffeedb, var(--accent-main));
+      box-shadow: 0 0 12px rgba(255, 141, 54, 0.9);
+    }
+
+    .action-card-icon.chevron {
+      font-size: 18px;
+      background: radial-gradient(circle at 30% 20%, #e4e7ff, #8f7bff);
+      box-shadow: 0 0 12px rgba(143, 123, 255, 0.9);
+    }
+
+    .details-body {
+      padding: 0 16px 10px;
+      border-top: 1px solid rgba(92, 115, 205, 0.7);
+      display: flex;
+      flex-direction: column;
       gap: 8px;
+      font-size: 13px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(153, 175, 255, 0.5);
+      background: rgba(12, 15, 38, 0.95);
+      color: var(--text-soft);
+      font-size: 12px;
       cursor: pointer;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.85);
-      position: relative;
-      overflow: hidden;
+      transition: background 0.16s ease, border-color 0.16s ease, transform 0.12s ease;
     }
 
-    .theme-pill.secondary {
-      border-color: rgba(238, 192, 132, 0.72);
-      background:
-        radial-gradient(circle at 0 0, rgba(255, 193, 123, 0.38), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(143, 123, 255, 0.18), transparent 55%),
-        rgba(15, 11, 6, 0.95);
-      color: #ffe9cf;
+    .chip.primary {
+      border-color: rgba(255, 180, 91, 0.9);
+      background: radial-gradient(circle at 20% 0%, rgba(255, 180, 91, 0.25), rgba(12, 15, 38, 0.98));
+      color: #ffeedd;
     }
 
-    .theme-pill span.label {
-      position: relative;
-      z-index: 1;
+    .chip:active {
+      transform: translateY(1px);
+      background: rgba(18, 22, 55, 0.98);
     }
 
-    .theme-pill small {
-      font-size: 0.65rem;
-      color: rgba(227, 232, 255, 0.8);
-      display: block;
-      opacity: 0.78;
+    .sheet-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sheet-list li {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(11, 14, 33, 0.98);
+      border: 1px solid rgba(82, 104, 195, 0.7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sheet-tag {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(255, 180, 91, 0.15);
+      color: #ffd9a0;
+      border: 1px solid rgba(255, 180, 91, 0.6);
+    }
+
+    .sheet-footnote {
+      font-size: 11px;
+      color: var(--text-muted);
       margin-top: 2px;
     }
 
-    .theme-pill::before {
-      content: "";
-      position: absolute;
-      inset: -80%;
-      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.4), transparent 55%);
-      opacity: 0;
-      transition: opacity 0.35s ease-out, transform 0.35s ease-out;
-      transform: translate3d(-20px, -20px, 0);
-      mix-blend-mode: soft-light;
-    }
-
-    .theme-pill:hover::before {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-
-    .video-thumb {
-      border-radius: 18px;
-      overflow: hidden;
-      position: relative;
-      background-image: radial-gradient(circle at 10% 0%, #ff8a5c 0, transparent 40%),
-        radial-gradient(circle at 100% 100%, #7b8cff 0, transparent 50%),
-        radial-gradient(circle at 50% 50%, #000 0, #050814 60%);
-      height: 120px;
-      margin-bottom: 10px;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.9);
-    }
-
-    .video-thumb::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35), transparent 65%);
-      mix-blend-mode: multiply;
-    }
-
-    .video-icon-circle {
-      position: absolute;
-      inset: 0;
+    /* Campo de intenção 1% */
+    .intent-field {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(145, 166, 255, 0.6);
+      background: rgba(9, 11, 31, 0.96);
       display: flex;
       align-items: center;
-      justify-content: center;
-      z-index: 1;
+      gap: 8px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.85);
     }
 
-    .video-icon-circle span {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 20%, #ffffff, #d4d7ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.68),
-        0 16px 40px rgba(0, 0, 0, 0.98);
+    .intent-icon {
+      font-size: 16px;
+      color: var(--accent-warm);
     }
 
-    .video-icon-circle span::before {
-      content: "";
-      display: inline-block;
-      margin-left: 2px;
-      border-style: solid;
-      border-width: 8px 0 8px 12px;
-      border-color: transparent transparent transparent #2b2761;
-    }
-
-    .list {
-      margin: 5px 0 8px;
-      padding-left: 0;
-      list-style: none;
-      font-size: 0.8rem;
-      color: var(--text-soft);
-    }
-
-    .list li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 4px 0;
-    }
-
-    .list li span {
+    .intent-input {
       flex: 1;
       min-width: 0;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      font-size: 12px;
+      outline: none;
     }
 
-    .list li small {
-      font-size: 0.65rem;
-      color: var(--text-muted);
+    .intent-input::placeholder {
+      color: rgba(145, 155, 210, 0.85);
     }
 
-    .label {
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    /* DETAIL SCREEN (MOBILE-LIKE) */
-
-    .phone-shell {
-      max-width: 420px;
-      margin: 0 auto;
-      border-radius: 30px;
-      padding: 18px 14px 18px;
-      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.3), transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(0, 246, 255, 0.18), transparent 50%),
-        rgba(5, 6, 18, 0.96);
-      border: 1px solid rgba(161, 181, 255, 0.45);
-      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .phone-shell::before {
-      content: "";
-      position: absolute;
-      inset: -35%;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(255, 138, 92, 0.3), transparent 55%),
-        radial-gradient(circle at 90% 110%, rgba(123, 140, 255, 0.2), transparent 55%);
-      opacity: 0.85;
-      mix-blend-mode: soft-light;
-      pointer-events: none;
-    }
-
-    .phone-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .phone-header {
+    .intent-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(153, 175, 255, 0.7);
+      background: radial-gradient(circle at 20% 0%, #ffffff, var(--accent-cold));
+      color: #10141f;
+      font-size: 14px;
+      width: 26px;
+      height: 26px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 6px;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0, 246, 255, 0.85);
     }
 
-    .phone-title {
-      font-size: 0.75rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    .status-bar {
+      margin-top: 10px;
+      font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-
-    .phone-main-title {
-      font-size: 1.1rem;
-      margin: 0 0 8px;
-    }
-
-    .phone-section {
-      margin-top: 14px;
-      border-radius: 18px;
-      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.2), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(0, 246, 255, 0.18), transparent 55%),
-        rgba(6, 8, 23, 0.98);
-      border: 1px solid rgba(138, 159, 255, 0.55);
-      padding: 12px 12px 14px;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.9);
-    }
-
-    .phone-mini-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 7px;
-    }
-
-    .phone-markdown-card {
-      border-radius: 18px;
-      border: 1px dashed rgba(185, 197, 255, 0.8);
-      padding: 10px 11px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
-      font-size: 0.76rem;
-      line-height: 1.4;
-      background: rgba(4, 5, 14, 0.98);
-      color: #f4f4ff;
-      margin-bottom: 8px;
-    }
-
-    .badge-counter {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(13, 17, 42, 0.98);
-      border: 1px solid rgba(173, 188, 255, 0.7);
-      color: var(--text-soft);
-      margin-top: 4px;
+      gap: 8px;
     }
 
-    .badge-counter span.count {
-      min-width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #8f7bff, #00f6ff);
-      color: #040513;
-      display: inline-flex;
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #18d88a);
+      box-shadow: 0 0 10px rgba(24, 216, 138, 0.9);
+    }
+
+    body.voice-on .status-dot {
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-warm));
+      box-shadow: 0 0 10px rgba(255, 180, 91, 0.95);
+    }
+
+    /* Orb */
+    .floating-orb {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-main), #ff5b7a);
+      box-shadow:
+        0 0 22px rgba(255, 141, 54, 0.95),
+        0 0 44px rgba(255, 91, 122, 0.8);
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.72rem;
+      color: #1b0b10;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 30;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .floating-orb::after {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 180, 91, 0.28);
+      box-shadow: 0 0 20px rgba(255, 180, 91, 0.45);
+      opacity: 0.7;
+    }
+
+    .floating-orb:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 0 26px rgba(255, 141, 54, 1),
+        0 0 52px rgba(255, 91, 122, 0.9);
+    }
+
+    body.voice-on .floating-orb {
+      background: radial-gradient(circle at 30% 20%, #ffffff, var(--accent-cold), #8f7bff);
+      box-shadow:
+        0 0 26px rgba(0, 246, 255, 0.98),
+        0 0 52px rgba(143, 123, 255, 0.95);
+    }
+
+    body.voice-on .floating-orb span { transform: rotate(90deg); }
+
+    .floating-orb span { transform: translateY(1px); }
+
+    /* Mock de voz */
+    .voice-mock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 84px;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(7, 9, 24, 0.98);
+      border-radius: 16px;
+      border: 1px solid rgba(153, 175, 255, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
+      transform: translateY(110%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.22s ease-out, opacity 0.22s ease-out;
+      z-index: 35;
+    }
+
+    .voice-mock.visible {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .voice-input {
+      flex: 1;
+      min-width: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(88, 112, 210, 0.9);
+      background: rgba(9, 11, 31, 0.96);
+      color: var(--text-soft);
+      padding: 6px 10px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .voice-input::placeholder {
+      color: rgba(145, 155, 210, 0.8);
+    }
+
+    .voice-btn {
+      border-radius: 999px;
+      border: none;
+      background: radial-gradient(circle at 20% 0%, #ffffff, var(--accent-warm));
+      color: #201013;
+      font-size: 12px;
+      padding: 6px 10px;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(255, 180, 91, 0.95);
+    }
+
+    /* View de stacks */
+    .view-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(5, 8, 24, 0.4), rgba(0, 0, 0, 0.92));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.24s ease;
+      z-index: 55;
+    }
+
+    .view-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .view-panel {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 110%);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(6, 9, 28, 0.98);
+      border-radius: 22px 22px 0 0;
+      box-shadow: 0 -20px 44px rgba(0, 0, 0, 0.98);
+      border-top: 1px solid rgba(153, 175, 255, 0.5);
+      transition: transform 0.26s ease-out;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+
+    .view-overlay.visible .view-panel {
+      transform: translate(-50%, 0);
+    }
+
+    .view-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 6px;
+      border-bottom: 1px solid rgba(55, 72, 150, 0.7);
+    }
+
+    .view-back {
+      border-radius: 999px;
+      border: 1px solid rgba(153, 175, 255, 0.8);
+      background: rgba(11, 15, 40, 0.98);
+      color: var(--text-soft);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .view-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .view-title {
+      font-size: 15px;
       font-weight: 600;
     }
 
-    .phone-list {
+    .view-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .view-body {
+      padding: 10px 14px 16px;
+      overflow-y: auto;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .view-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    details.stack-card {
+      background: rgba(9, 11, 31, 0.98);
+      border-radius: 16px;
+      border: 1px solid rgba(102, 122, 200, 0.75);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+    }
+
+    details.stack-card[open] {
+      border-color: rgba(255, 180, 91, 0.9);
+      background: radial-gradient(circle at 5% 0%, rgba(255, 180, 91, 0.2), rgba(9, 11, 31, 0.98));
+    }
+
+    details.stack-card > summary {
       list-style: none;
-      margin: 6px 0 8px;
-      padding-left: 0;
-      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    details.stack-card > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .stack-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stack-symbol {
+      font-size: 16px;
+    }
+
+    .stack-body {
+      padding: 0 12px 10px;
+      border-top: 1px solid rgba(72, 92, 195, 0.7);
+      font-size: 12px;
+      color: var(--text-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stack-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .stack-tag-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(153, 175, 255, 0.7);
+      background: rgba(10, 13, 35, 0.98);
       color: var(--text-soft);
     }
 
-    .phone-list li {
-      padding: 5px 0;
+    /* Menu lateral + tema */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(11, 16, 40, 0.95), rgba(0, 0, 0, 0.9));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      z-index: 60;
+    }
+
+    .menu-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-panel {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: min(80%, 320px);
+      background: rgba(5, 8, 26, 0.98);
+      border-right: 1px solid rgba(153, 175, 255, 0.5);
+      box-shadow: 18px 0 40px rgba(0, 0, 0, 0.95);
+      padding: 14px 14px 18px;
+      transform: translateX(-100%);
+      transition: transform 0.24s ease-out;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .menu-overlay.visible .menu-panel {
+      transform: translateX(0);
+    }
+
+    .menu-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      margin-bottom: 4px;
     }
 
-    .phone-list li span {
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+    .menu-title {
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .small-square-btn {
+    .menu-close {
+      border-radius: 999px;
+      border: 1px solid rgba(153, 175, 255, 0.7);
+      background: rgba(11, 15, 40, 0.96);
+      color: var(--text-soft);
       width: 28px;
       height: 28px;
-      border-radius: 9px;
-      border: 1px solid rgba(145, 167, 255, 0.8);
-      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.55), transparent 60%),
-        rgba(6, 8, 23, 1);
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.78rem;
+      font-size: 16px;
       cursor: pointer;
-      color: #f1f1ff;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.85);
-      flex-shrink: 0;
     }
 
-    .phone-whatsapp-btn {
-      width: 100%;
-      margin-top: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-radius: 999px;
-      border: none;
-      padding: 9px 12px;
-      font-size: 0.8rem;
-      background: linear-gradient(135deg, #23d366, #14b052);
-      color: #021006;
-      cursor: pointer;
-      box-shadow: 0 14px 30px rgba(8, 210, 110, 0.9);
+    .menu-section-title {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
     }
 
-    .phone-whatsapp-btn span.icon {
-      font-size: 1rem;
-    }
-
-    .phone-whatsapp-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 36px rgba(8, 210, 110, 1);
-    }
-
-    .phone-whatsapp-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 10px 26px rgba(8, 210, 110, 0.9);
-    }
-
-    .divider-label {
-      margin: 16px 0 8px;
-      border-top: 1px solid rgba(97, 108, 180, 0.65);
-      padding-top: 10px;
-      font-size: 0.78rem;
-      color: var(--text-soft);
-    }
-
-    .divider-label strong {
-      color: #fff;
-    }
-
-    .phone-video-card {
+    .menu-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       margin-top: 4px;
-      border-radius: 18px;
-      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.3), transparent 55%),
-        radial-gradient(circle at 100% 120%, rgba(0, 246, 255, 0.18), transparent 55%),
-        rgba(4, 5, 14, 0.98);
-      border: 1px solid rgba(138, 159, 255, 0.7);
-      padding: 10px 10px 12px;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.96);
     }
 
-    .phone-video-thumb {
-      border-radius: 15px;
-      height: 110px;
-      background-image: radial-gradient(circle at 0 0, #ff8a5c 0, transparent 40%),
-        radial-gradient(circle at 100% 110%, #7b8cff 0, transparent 50%),
-        radial-gradient(circle at 50% 40%, #000 0, #050814 60%);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .phone-video-thumb::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.28), transparent 60%);
-      mix-blend-mode: multiply;
-    }
-
-    .phone-video-thumb .video-icon-circle {
-      z-index: 2;
-    }
-
-    .phone-video-caption {
-      font-size: 0.78rem;
+    .menu-item {
+      border-radius: 12px;
+      border: 1px solid rgba(92, 115, 205, 0.8);
+      background: rgba(9, 12, 33, 0.96);
       color: var(--text-soft);
-      margin-top: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
     }
 
-    /* RESPONSIVE */
-
-    @media (max-width: 880px) {
-      .grid {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto auto;
-      }
-
-      .grid-left,
-      .grid-right {
-        grid-template-rows: none;
-      }
+    .menu-item span {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 2px;
     }
 
-    @media (max-width: 720px) {
-      body {
-        padding: 12px 8px 18px;
-      }
-
-      .app-shell {
-        padding: 14px 10px 20px;
-        border-radius: 24px;
-      }
-
-      header.app-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .grid {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-      }
-
-      .card {
-        padding: 14px 14px 16px;
-        border-radius: 20px;
-      }
-
-      .phone-shell {
-        border-radius: 24px;
-        padding: 14px 11px 16px;
-      }
-
-      .brand-text h1 {
-        font-size: 0.98rem;
-      }
+    .theme-chip {
+      font-size: 11px;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
+    @media (min-width: 480px) {
+      .shell { padding-top: 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <div class="app-inner">
-      <header class="app-header">
-        <div class="brand">
-          <div class="brand-orb"></div>
-          <div class="brand-text">
-            <h1>Dual.Infodose</h1>
-            <p>Ativações por Markdown · Nebula Pro + Base Madeira</p>
-          </div>
+  <main class="shell">
+    <header>
+      <div class="header-left">
+        <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menu">☰</button>
+        <div class="logo-title">
+          <span>Dual.Infodose</span>
+          <span>Home do dia</span>
         </div>
+      </div>
+      <button class="mode-toggle" id="modeToggle" type="button">
+        <div class="mode-dot"></div>
+        <span id="modeLabel">Modo: Toque</span>
+      </button>
+    </header>
 
-        <div class="top-actions">
-          <div class="pill">
-            <span class="pill-dot"></span>
-            <span>Modo Dark+Glass Mobile</span>
+    <section class="greeting-card" aria-label="Saudação do dia">
+      <div class="greeting-top">
+        <span id="timeLeftLabel">06h</span>
+        <span class="greeting-window" id="timeWindowLabel">06h – 23h</span>
+        <span id="timeRightLabel">23h</span>
+      </div>
+
+      <div class="greeting-main">
+        <div class="greeting-title" id="greetingTitle">Bom dia, Dual</div>
+        <div class="greeting-subtitle" id="greetingSubtitle">
+          Sua dose de hoje já está organizada
+        </div>
+      </div>
+
+      <div class="voice-spectrum" aria-hidden="true"></div>
+
+      <div class="time-block">
+        <div class="time-labels">
+          <span>Início</span>
+          <span id="timeCurrentLabel">08h</span>
+          <span>Final</span>
+        </div>
+        <div class="time-slider-wrapper">
+          <input id="timeSlider" type="range" min="6" max="23" step="1" value="8" />
+        </div>
+      </div>
+    </section>
+
+    <section class="main-actions" aria-label="Ações principais do dia">
+      <!-- Ativações -->
+      <details class="action-card" data-action="ativacoes">
+        <summary>
+          <span>Ativações de hoje</span>
+          <div class="action-card-icon">⚡</div>
+        </summary>
+        <div class="details-body">
+          <div class="chip-row">
+            <button class="chip primary" type="button">Agora · 25min</button>
+            <button class="chip" type="button">Janela de foco</button>
+            <button class="chip" type="button">Recarregar</button>
           </div>
+          <ul class="sheet-list">
+            <li>
+              <span>Foco suave</span>
+              <span class="sheet-tag">☀ manhã</span>
+            </li>
+            <li>
+              <span>Pulso de execução</span>
+              <span class="sheet-tag">⚙ tarde</span>
+            </li>
+            <li>
+              <span>Desligar com consciência</span>
+              <span class="sheet-tag">🌙 noite</span>
+            </li>
+          </ul>
+          <p class="sheet-footnote">
+            Escolha 1 ação mínima. O resto o sistema ajuda a alinhar.
+          </p>
+        </div>
+      </details>
 
-          <div class="nav-tabs" aria-label="Trocar de tela">
-            <button class="nav-tab active" data-screen="dashboard">Painel</button>
-            <button class="nav-tab" data-screen="ativacoes">Minhas ativações</button>
+      <!-- Organizar meu dia -->
+      <details class="action-card" data-action="organizar">
+        <summary>
+          <span>Organizar meu dia</span>
+          <div class="action-card-icon chevron">›</div>
+        </summary>
+        <div class="details-body">
+          <div class="chip-row">
+            <button class="chip primary" type="button">◐ Manhã</button>
+            <button class="chip" type="button">☼ Tarde</button>
+            <button class="chip" type="button">✦ Noite</button>
+          </div>
+          <ul class="sheet-list">
+            <li>
+              <span>Visão geral simples</span>
+              <span class="sheet-tag">👁 visão</span>
+            </li>
+            <li>
+              <span>Reagrupar compromissos</span>
+              <span class="sheet-tag">🔁 auto</span>
+            </li>
+            <li>
+              <span>Criar espaço vazio</span>
+              <span class="sheet-tag">⭕ respiro</span>
+            </li>
+          </ul>
+          <p class="sheet-footnote">
+            Dia em 3 blocos. Menos caos, mais “eu sei o que estou fazendo”.
+          </p>
+        </div>
+      </details>
+
+      <!-- Arquétipo do dia -->
+      <details class="action-card" data-action="arquetipo">
+        <summary>
+          <span>Arquétipo do dia</span>
+          <div class="action-card-icon chevron">›</div>
+        </summary>
+        <div class="details-body">
+          <div class="chip-row">
+            <button class="chip primary" type="button">Resumo ✦</button>
+            <button class="chip" type="button">Ouvir ◎</button>
+            <button class="chip" type="button">Aplicar 1%</button>
+          </div>
+          <ul class="sheet-list">
+            <li>
+              <span>Arquétipo ativo: Criador</span>
+              <span class="sheet-tag">🎨 hoje</span>
+            </li>
+            <li>
+              <span>Micro-ação simbólica</span>
+              <span class="sheet-tag">1%</span>
+            </li>
+          </ul>
+          <p class="sheet-footnote">
+            Cor do dia pronta. Você só escolhe onde pingar essa energia.
+          </p>
+        </div>
+      </details>
+
+      <!-- Documentos -->
+      <details class="action-card" data-action="docs">
+        <summary>
+          <span>Meus <span class="label-strong">documentos</span></span>
+          <div class="action-card-icon chevron">›</div>
+        </summary>
+        <div class="details-body">
+          <div class="chip-row">
+            <button class="chip primary" type="button">📚 Estudo</button>
+            <button class="chip" type="button">💼 Trabalho</button>
+            <button class="chip" type="button">🏡 Pessoal</button>
+          </div>
+          <ul class="sheet-list">
+            <li>
+              <span>Últimos abertos</span>
+              <span class="sheet-tag">🕒 recentes</span>
+            </li>
+            <li>
+              <span>Pastas por tema</span>
+              <span class="sheet-tag">📂 organizado</span>
+            </li>
+          </ul>
+          <p class="sheet-footnote">
+            Tudo agrupado. Mesmo quem é leigo sente que está “manjando”.
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Campo intenção -->
+    <div class="intent-field">
+      <span class="intent-icon">✦</span>
+      <input
+        id="intentInput"
+        class="intent-input"
+        type="text"
+        placeholder="Intenção 1% de hoje..."
+      />
+      <button id="intentSend" class="intent-btn" type="button">➤</button>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <div class="status-dot"></div>
+      <span id="statusText">
+        Abra um card, ajuste a linha do tempo ou escreva uma intenção 1%.
+      </span>
+    </div>
+  </main>
+
+  <!-- Mock de voz -->
+  <div class="voice-mock" id="voiceMock">
+    <input
+      id="voiceInput"
+      class="voice-input"
+      type="text"
+      placeholder="Ex.: 'ativar o dia', 'organizar meu dia', 'arquétipo do dia', 'abrir meus documentos'..."
+    />
+    <button class="voice-btn" id="voiceSend" type="button">OK</button>
+  </div>
+
+  <button class="floating-orb" id="orbButton" type="button" aria-label="Alternar modo voz">
+    <span>◎</span>
+  </button>
+
+  <!-- View Stacks -->
+  <div class="view-overlay" id="viewOverlay">
+    <section class="view-panel" id="viewPanel">
+      <header class="view-header">
+        <button class="view-back" id="viewBack" type="button" aria-label="Voltar">‹</button>
+        <div class="view-titles">
+          <div class="view-title" id="viewTitle">Stacks do Dual.Infodose</div>
+          <div class="view-subtitle" id="viewSubtitle">
+            UNO · Dual · Trindade em blocos visuais.
           </div>
         </div>
       </header>
+      <div class="view-body" id="viewBody"></div>
+    </section>
+  </div>
 
-      <main>
-        <!-- DASHBOARD ==================================== -->
-        <section id="screen-dashboard" class="screen active" aria-label="Painel Dual.Infodose">
-          <div class="grid">
-            <div class="grid-left">
-              <!-- MAIN CARD: DUAL.INFODOSE -->
-              <article class="card">
-                <div class="card-inner">
-                  <div class="card-title-row">
-                    <span class="card-title main-title">DUAL.INFODOSE</span>
-                    <span class="card-chevron">Ativações ▸</span>
-                  </div>
+  <!-- Menu lateral / tema -->
+  <div class="menu-overlay" id="menuOverlay">
+    <aside class="menu-panel">
+      <div class="menu-top">
+        <span class="menu-title">Dual.Infodose</span>
+        <button class="menu-close" id="menuClose" type="button" aria-label="Fechar menu">×</button>
+      </div>
 
-                  <h2 class="card-hero-title">Meus Markdowns</h2>
-                  <p class="card-subtitle">
-                    Use pequenos textos em Markdown como ativações diárias para o seu Dual.
-                  </p>
+      <div class="menu-section">
+        <span class="menu-section-title">Navegação</span>
+        <button class="menu-item" data-view="home">
+          Home
+          <span>Voltar para a visão principal.</span>
+        </button>
+        <button class="menu-item" data-view="stacks">
+          Stacks & painéis
+          <span>Ver blocos internos UNO · Dual · Trindade.</span>
+        </button>
+      </div>
 
-                  <div class="code-preview">
-                    <small>Exemplo</small>
-                    Oi, Dual! Estamos ativados em pulso Dual.Infodose ⚡
-                  </div>
+      <div class="menu-section">
+        <span class="menu-section-title">Tema</span>
+        <div class="chip-row">
+          <button class="chip theme-chip primary" data-theme="auto" type="button">Auto (hora)</button>
+          <button class="chip theme-chip" data-theme="dawn" type="button">Amanhecer</button>
+          <button class="chip theme-chip" data-theme="day" type="button">Dia Claro</button>
+          <button class="chip theme-chip" data-theme="night" type="button">Noite Nebula</button>
+        </div>
+      </div>
 
-                  <button class="primary-btn">
-                    <span class="icon">💬</span>
-                    <span>Entrar no grupo do WhatsApp</span>
-                  </button>
-
-                  <div class="card-footer">
-                    <span>Toasts combinam com vídeos e áudios curtos.</span>
-                    <button class="ghost-btn">Abrir carteira de ativações</button>
-                  </div>
-                </div>
-              </article>
-
-              <!-- DOCUMENTS CARD -->
-              <article class="card">
-                <div class="card-inner">
-                  <div class="card-title-row">
-                    <span class="card-title">Meus documentos</span>
-                    <span class="card-chevron">▸</span>
-                  </div>
-
-                  <ul class="list" aria-label="Lista de documentos Markdown">
-                    <li>
-                      <span>documento.md</span>
-                      <small>Markdown vivo</small>
-                    </li>
-                    <li>
-                      <span>protocolo.md</span>
-                      <small>Fluxo 3·6·9</small>
-                    </li>
-                    <li>
-                      <span>icones.md</span>
-                      <small>Referências</small>
-                    </li>
-                  </ul>
-
-                  <button class="secondary-btn">
-                    <span>Upload de Markdown</span>
-                  </button>
-                </div>
-              </article>
-            </div>
-
-            <div class="grid-right">
-              <!-- THEMES CARD -->
-              <article class="card">
-                <div class="card-inner">
-                  <div class="card-title-row">
-                    <span class="card-title">Meus temas</span>
-                    <span class="card-chevron">▸</span>
-                  </div>
-
-                  <div class="tag-row" style="margin-top: 4px;">
-                    <button class="theme-pill" type="button">
-                      <span class="label">
-                        Nebula Pro
-                        <small>Glass + gradiente cósmico</small>
-                      </span>
-                    </button>
-                    <button class="theme-pill secondary" type="button">
-                      <span class="label">
-                        Base Madeira
-                        <small>Calor, textura e foco</small>
-                      </span>
-                    </button>
-                  </div>
-
-                  <div class="card-footer">
-                    <span>Dark+Glass Mobile</span>
-                  </div>
-                </div>
-              </article>
-
-              <!-- VIDEOS CARD 1 -->
-              <article class="card">
-                <div class="card-inner">
-                  <div class="card-title-row">
-                    <span class="card-title">Meus vídeos</span>
-                    <span class="card-chevron">▸</span>
-                  </div>
-
-                  <div class="video-thumb" role="button" aria-label="Meus vídeos">
-                    <div class="video-icon-circle">
-                      <span></span>
-                    </div>
-                  </div>
-
-                  <p class="card-subtitle" style="margin-bottom: 0;">
-                    Toasts combinam com vídeos curtos e loops de foco.
-                  </p>
-                </div>
-              </article>
-
-              <!-- USE MARKDOWN FROM GROUP -->
-              <article class="card">
-                <div class="card-inner">
-                  <div class="card-title-row">
-                    <span class="card-title">Use markdown ou HTML</span>
-                    <span class="card-chevron">▸</span>
-                  </div>
-
-                  <p class="card-subtitle">
-                    Puxe as ativações prontas do grupo Dual.Infodose e personalize.
-                  </p>
-
-                  <div class="code-preview">
-                    <small>Dual.Infodose</small>
-                    Oi, Dual! Estamos ativados em pulso Dual.Infodose ⚡
-                  </div>
-
-                  <button class="secondary-btn">
-                    <span>Upload de Markdown</span>
-                  </button>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <!-- DETAIL: MINHAS ATIVAÇÕES ===================== -->
-        <section id="screen-ativacoes" class="screen" aria-label="Minhas ativações Dual">
-          <div class="phone-shell">
-            <div class="phone-inner">
-              <div class="phone-header">
-                <div>
-                  <div class="phone-title">Dual.Infodose</div>
-                  <h2 class="phone-main-title">Minhas ativações Dual</h2>
-                </div>
-                <div class="pill">
-                  <span class="pill-dot"></span>
-                  <span>Carteira ativa</span>
-                </div>
-              </div>
-
-              <!-- MARKDOWN ATUAL -->
-              <section class="phone-section" aria-label="Markdown atual">
-                <div class="phone-mini-label">Markdown atual</div>
-                <div class="phone-markdown-card">
-                  Oi, Dual! Estamos ativados em pulso Dual.Infodose ⚡
-                </div>
-
-                <div class="phone-mini-label">Carteira de ativações</div>
-                <div class="badge-counter">
-                  Markdown
-                  <span class="count">2</span>
-                </div>
-              </section>
-
-              <!-- LISTA DE MARKDOWNS -->
-              <section class="phone-section" style="margin-top: 14px;">
-                <div class="phone-mini-label">Meus Markdowns</div>
-                <ul class="phone-list">
-                  <li>
-                    <span>Ativação pronta</span>
-                    <button class="small-square-btn" title="Copiar">
-                      ⧉
-                    </button>
-                  </li>
-                  <li>
-                    <span>Reset de foco</span>
-                    <button class="small-square-btn" title="Copiar">
-                      ⧉
-                    </button>
-                  </li>
-                </ul>
-
-                <button class="secondary-btn" style="width: 100%; justify-content: center; margin-top: 4px;">
-                  <span>Novo markdown</span>
-                </button>
-
-                <button class="phone-whatsapp-btn" style="margin-top: 10px;">
-                  <span class="icon">🟢</span>
-                  <span>Entrar no grupo</span>
-                </button>
-              </section>
-
-              <!-- BLOCO DE VÍDEO EXEMPLO -->
-              <div class="divider-label">
-                Um exemplo de <strong>vídeo + toasts</strong> para suas ativações:
-              </div>
-
-              <div class="phone-video-card">
-                <div class="phone-video-thumb">
-                  <div class="video-icon-circle">
-                    <span></span>
-                  </div>
-                </div>
-                <div class="phone-video-caption">
-                  Use um vídeo curto com textura Nebula Pro e rode toasts de
-                  ativações Dual por cima — perfeitos para WhatsApp, Reels ou
-                  stories.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
+      <div class="menu-section">
+        <span class="menu-section-title">Modo</span>
+        <p style="font-size:12px;color:var(--text-soft);margin:0;">
+          Use o botão no topo ou o orb para alternar entre <strong>Toque</strong> e <strong>Voz</strong>.
+        </p>
+      </div>
+    </aside>
   </div>
 
   <script>
-    // Troca entre Painel e Minhas ativações
-    const tabs = document.querySelectorAll(".nav-tab");
-    const screens = document.querySelectorAll(".screen");
+    (function () {
+      const slider = document.getElementById("timeSlider");
+      const timeCurrentLabel = document.getElementById("timeCurrentLabel");
+      const greetingTitle = document.getElementById("greetingTitle");
+      const greetingSubtitle = document.getElementById("greetingSubtitle");
+      const statusText = document.getElementById("statusText");
+      const modeToggle = document.getElementById("modeToggle");
+      const modeLabel = document.getElementById("modeLabel");
+      const orbButton = document.getElementById("orbButton");
+      const actionCards = document.querySelectorAll("details.action-card");
 
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        const target = tab.getAttribute("data-screen");
+      const voiceMock = document.getElementById("voiceMock");
+      const voiceInput = document.getElementById("voiceInput");
+      const voiceSend = document.getElementById("voiceSend");
 
-        tabs.forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
+      const menuButton = document.getElementById("menuButton");
+      const menuOverlay = document.getElementById("menuOverlay");
+      const menuClose = document.getElementById("menuClose");
+      const menuItems = document.querySelectorAll(".menu-item");
+      const themeChips = document.querySelectorAll(".theme-chip");
 
-        screens.forEach((screen) => {
-          if (screen.id === "screen-" + target) {
-            screen.classList.add("active");
+      const viewOverlay = document.getElementById("viewOverlay");
+      const viewTitle = document.getElementById("viewTitle");
+      const viewSubtitle = document.getElementById("viewSubtitle");
+      const viewBody = document.getElementById("viewBody");
+      const viewBack = document.getElementById("viewBack");
+
+      const intentInput = document.getElementById("intentInput");
+      const intentSend = document.getElementById("intentSend");
+
+      const rootStyle = document.documentElement.style;
+
+      /* TEMAS DINÂMICOS */
+      const themes = {
+        night: {
+          bgMain: "radial-gradient(circle at top, #050716 0%, #020309 45%, #00010a 100%)",
+          overlay: "radial-gradient(circle at 80% 10%, rgba(90, 140, 255, 0.35), transparent 60%)",
+          accentMain: "#ff8d36",
+          accentWarm: "#ffb45b",
+          accentCold: "#00f6ff"
+        },
+        dawn: {
+          bgMain: "radial-gradient(circle at top, #261640 0%, #050715 45%, #020309 100%)",
+          overlay: "radial-gradient(circle at 75% 15%, #ffb45b 0%, #ff8d36 22%, transparent 65%)",
+          accentMain: "#ff8d36",
+          accentWarm: "#ffb45b",
+          accentCold: "#00f6ff"
+        },
+        day: {
+          bgMain: "radial-gradient(circle at top, #2a3c63 0%, #071220 45%, #020309 100%)",
+          overlay: "radial-gradient(circle at 20% 0%, rgba(120, 210, 255, 0.35), transparent 60%)",
+          accentMain: "#3fd4ff",
+          accentWarm: "#ffd27a",
+          accentCold: "#00f6ff"
+        }
+      };
+
+      function applyTheme(themeKey) {
+        const t = themes[themeKey];
+        if (!t) return;
+        rootStyle.setProperty("--bg-main", t.bgMain);
+        rootStyle.setProperty("--bg-overlay", t.overlay);
+        rootStyle.setProperty("--accent-main", t.accentMain);
+        rootStyle.setProperty("--accent-warm", t.accentWarm);
+        rootStyle.setProperty("--accent-cold", t.accentCold);
+      }
+
+      function getThemeByHour(h) {
+        if (h < 6 || h >= 21) return "night";
+        if (h < 12) return "dawn";
+        if (h < 18) return "day";
+        return "dawn";
+      }
+
+      let themeMode = "auto";
+      let lastHour = new Date().getHours();
+      let isUserAdjustingSlider = false;
+      let sliderAdjustTimeout = null;
+
+      function updateThemeByTime(h) {
+        const themeKey = getThemeByHour(h);
+        applyTheme(themeKey);
+      }
+
+      /* HORA / SAUDAÇÃO */
+      function padHour(h) {
+        const n = parseInt(h, 10);
+        return (n < 10 ? "0" : "") + n + "h";
+      }
+
+      function updateFromHour(hour) {
+        const h = parseInt(hour, 10);
+        timeCurrentLabel.textContent = padHour(h);
+
+        let greeting;
+        if (h < 12) greeting = "Bom dia, Dual";
+        else if (h < 18) greeting = "Boa tarde, Dual";
+        else greeting = "Boa noite, Dual";
+        greetingTitle.textContent = greeting;
+        greetingSubtitle.textContent = "Sua dose de hoje já está organizada";
+
+        if (themeMode === "auto") {
+          updateThemeByTime(h);
+        }
+      }
+
+      slider.addEventListener("input", function () {
+        isUserAdjustingSlider = true;
+        if (sliderAdjustTimeout) clearTimeout(sliderAdjustTimeout);
+        sliderAdjustTimeout = setTimeout(function () {
+          isUserAdjustingSlider = false;
+        }, 12000);
+        updateFromHour(slider.value);
+      });
+
+      /* MODO VOZ */
+      function setVoiceMode(isOn) {
+        if (isOn) {
+          document.body.classList.add("voice-on");
+          modeLabel.textContent = "Modo: Voz";
+          statusText.textContent =
+            "Modo Voz ativo: fale/digite um comando ou abra um card.";
+          voiceMock.classList.add("visible");
+          voiceInput.focus();
+        } else {
+          document.body.classList.remove("voice-on");
+          modeLabel.textContent = "Modo: Toque";
+          statusText.textContent =
+            "Modo Toque ativo: use os cards, escreva a intenção ou ative o orb.";
+          voiceMock.classList.remove("visible");
+          voiceInput.value = "";
+        }
+      }
+
+      modeToggle.addEventListener("click", function () {
+        const willTurnOn = !document.body.classList.contains("voice-on");
+        setVoiceMode(willTurnOn);
+      });
+
+      orbButton.addEventListener("click", function () {
+        const willTurnOn = !document.body.classList.contains("voice-on");
+        setVoiceMode(willTurnOn);
+      });
+
+      /* STATUS AO ABRIR/CARD */
+      actionCards.forEach(function (card) {
+        const labelEl = card.querySelector("summary span");
+        const labelText = labelEl ? labelEl.textContent.trim() : "este card";
+
+        card.addEventListener("toggle", function () {
+          if (card.open) {
+            statusText.textContent =
+              "Você abriu \"" + labelText + "\" — tudo já organizado em blocos claros.";
           } else {
-            screen.classList.remove("active");
+            statusText.textContent =
+              "Cards fechados. Abra um card, escreva a intenção ou use o Modo Voz.";
           }
         });
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
       });
-    });
+
+      /* VOZ → ABRIR CARD */
+      function openCardByKey(key) {
+        const target = document.querySelector('details.action-card[data-action="' + key + '"]');
+        if (target) {
+          target.open = true;
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+
+      function handleVoiceCommand(rawText) {
+        const text = (rawText || "").trim();
+        if (!text) return;
+        const lower = text.toLowerCase();
+        let target = null;
+
+        if (lower.includes("ativ")) target = "ativacoes";
+        else if (lower.includes("organ")) target = "organizar";
+        else if (lower.includes("arqu")) target = "arquetipo";
+        else if (lower.includes("doc") || lower.includes("arquivo")) target = "docs";
+
+        if (target) {
+          openCardByKey(target);
+          statusText.textContent =
+            "Comando reconhecido: \"" + text + "\" → abrindo card correspondente.";
+        } else {
+          statusText.textContent =
+            "Não entendi o comando. Exemplos: 'ativar o dia', 'organizar meu dia', 'arquétipo do dia', 'abrir meus documentos'.";
+        }
+      }
+
+      voiceSend.addEventListener("click", function () {
+        handleVoiceCommand(voiceInput.value);
+      });
+
+      voiceInput.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          handleVoiceCommand(voiceInput.value);
+        }
+      });
+
+      /* INTENÇÃO 1% */
+      function handleIntentSubmit() {
+        const text = (intentInput.value || "").trim();
+        if (!text) return;
+        statusText.textContent =
+          "Intenção registrada: \"" + text + "\" — 1% hoje, o resto o sistema acompanha.";
+        intentInput.value = "";
+      }
+
+      intentSend.addEventListener("click", handleIntentSubmit);
+      intentInput.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          handleIntentSubmit();
+        }
+      });
+
+      /* MENU / TEMA / STACKS */
+      function openMenu() {
+        menuOverlay.classList.add("visible");
+      }
+
+      function closeMenu() {
+        menuOverlay.classList.remove("visible");
+      }
+
+      menuButton.addEventListener("click", openMenu);
+      menuClose.addEventListener("click", closeMenu);
+      menuOverlay.addEventListener("click", function (ev) {
+        if (ev.target === menuOverlay) closeMenu();
+      });
+
+      themeChips.forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          const mode = chip.getAttribute("data-theme");
+          themeMode = mode;
+
+          themeChips.forEach(function (c) { c.classList.remove("primary"); });
+          chip.classList.add("primary");
+
+          if (mode === "auto") {
+            updateThemeByTime(lastHour);
+          } else {
+            applyTheme(mode);
+          }
+        });
+      });
+
+      function openStacksView() {
+        viewTitle.textContent = "Stacks do Dual.Infodose";
+        viewSubtitle.textContent = "UNO · Dual · Trindade em sanfona simbólica.";
+        viewBody.innerHTML = `
+          <details class="stack-card" open>
+            <summary>
+              <div class="stack-label">
+                <span class="stack-symbol">◐</span>
+                <span>Stack Home · Dia</span>
+              </div>
+              <span>☀</span>
+            </summary>
+            <div class="stack-body">
+              <span>Visão geral do dia, linha do tempo e campo de intenção.</span>
+              <div class="stack-tags">
+                <span class="stack-tag-pill">linha do tempo</span>
+                <span class="stack-tag-pill">cards principais</span>
+                <span class="stack-tag-pill">tema dinâmico</span>
+              </div>
+            </div>
+          </details>
+
+          <details class="stack-card">
+            <summary>
+              <div class="stack-label">
+                <span class="stack-symbol">☼</span>
+                <span>Stack Foco</span>
+              </div>
+              <span>⚙</span>
+            </summary>
+            <div class="stack-body">
+              <span>Blocos de estudo/trabalho com timers, trilhas e 1% de entrega.</span>
+              <div class="stack-tags">
+                <span class="stack-tag-pill">foco</span>
+                <span class="stack-tag-pill">timer</span>
+                <span class="stack-tag-pill">trilhas</span>
+              </div>
+            </div>
+          </details>
+
+          <details class="stack-card">
+            <summary>
+              <div class="stack-label">
+                <span class="stack-symbol">✦</span>
+                <span>Stack Ritual</span>
+              </div>
+              <span>🔮</span>
+            </summary>
+            <div class="stack-body">
+              <span>Arquétipos, som, respiração e micro-rituais Infodose.</span>
+              <div class="stack-tags">
+                <span class="stack-tag-pill">arquétipo</span>
+                <span class="stack-tag-pill">áudio</span>
+                <span class="stack-tag-pill">respirar</span>
+              </div>
+            </div>
+          </details>
+
+          <details class="stack-card">
+            <summary>
+              <div class="stack-label">
+                <span class="stack-symbol">⭕</span>
+                <span>Stack Docs</span>
+              </div>
+              <span>📂</span>
+            </summary>
+            <div class="stack-body">
+              <span>Documentos, links e materiais agrupados por tema.</span>
+              <div class="stack-tags">
+                <span class="stack-tag-pill">estudo</span>
+                <span class="stack-tag-pill">trabalho</span>
+                <span class="stack-tag-pill">pessoal</span>
+              </div>
+            </div>
+          </details>
+
+          <p class="view-note">
+            (Protótipo) — cada stack aqui vira uma cápsula real dentro do Hub / BlueCup.
+          </p>
+        `;
+        viewOverlay.classList.add("visible");
+        statusText.textContent = "Você abriu a visão de Stacks & painéis em sanfona.";
+      }
+
+      function closeView() {
+        viewOverlay.classList.remove("visible");
+        statusText.textContent =
+          "Rota fechada. Use os cards, a intenção ou o Modo Voz para continuar.";
+      }
+
+      viewBack.addEventListener("click", closeView);
+      viewOverlay.addEventListener("click", function (ev) {
+        if (ev.target === viewOverlay) closeView();
+      });
+
+      menuItems.forEach(function (item) {
+        item.addEventListener("click", function () {
+          const view = item.getAttribute("data-view");
+          if (view === "home") {
+            closeView();
+            statusText.textContent =
+              "Home ativa. Abra um card, escreva a intenção ou ajuste a linha do tempo.";
+          } else if (view === "stacks") {
+            openStacksView();
+          }
+          closeMenu();
+        });
+      });
+
+      /* RELÓGIO EM TEMPO REAL */
+      function syncWithClock(first) {
+        const now = new Date();
+        lastHour = now.getHours();
+        const clamped = Math.min(Math.max(lastHour, 6), 23);
+        if (!isUserAdjustingSlider || first) {
+          slider.value = clamped;
+          updateFromHour(clamped);
+        } else if (themeMode === "auto") {
+          updateThemeByTime(lastHour);
+        }
+      }
+
+      syncWithClock(true);
+      setInterval(function () { syncWithClock(false); }, 60000);
+
+      /* Inicialização */
+      setVoiceMode(false);
+      if (themeMode === "auto") {
+        updateThemeByTime(lastHour);
+      }
+    })();
   </script>
 </body>
 </html>
