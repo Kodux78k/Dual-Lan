@@ -1,638 +1,229 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="nebula">
+<html lang="pt-BR">
 <head>
+   <link rel="manifest" href="./manifest.webmanifest"> 
   <meta charset="UTF-8" />
-  <title>BlueCup · INFODOSE LAN Explorer (Cards)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#00d8d8" />
-<!-- Se o arquivo estiver na raiz, deixa só "manifest.webmanifest" -->
-  <link rel="manifest" href="./manifest.webmanifest">
-
-  <!-- Ícone principal (favicon / atalho) -->
-  <!-- Aqui entra teu ícone 192x192 -->
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
-
-  <!-- Ícone para iOS (pode ser 180x180, mas 192 também funciona bem) -->
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-
-
+  <title>Dual.Infodose · Ativações e Markdown</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #050711;
-      --text: #d7d7d7;
-      --grad_a: #00d8d8;
-      --grad_b: #d800d8;
-      --accent: #39FFB6;
-      --radius: 20px;
-      --blur: 24px;
-      --shadow: 0 8px 32px rgba(0,255,255,.25);
+      /* Nebula Pro + Base Madeira */
+      --bg-main: radial-gradient(circle at top, #2c174d 0%, #060716 45%, #020309 100%);
+      --card-bg: rgba(8, 10, 25, 0.96);
+      --card-bg-soft: rgba(10, 13, 35, 0.96);
+      --glass: rgba(18, 23, 55, 0.68);
+      --border-soft: rgba(145, 166, 255, 0.35);
+      --border-strong: rgba(199, 212, 255, 0.85);
+
+      --accent-main: #8f7bff;
+      --accent-strong: #00f6ff;
+      --accent-warm: #ffb45b;
+
+      --madeira: #b57a43;
+      --madeira-deep: #5f3d23;
+
+      --text-main: #f5f5ff;
+      --text-soft: #a9b0d9;
+      --text-muted: #767ea7;
+
+      --radius-xl: 26px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+
+      --shadow-soft: 0 18px 55px rgba(0, 0, 0, 0.88);
+      --shadow-small: 0 10px 32px rgba(0, 0, 0, 0.75);
+      --transition-fast: 0.18s ease-out;
+      --transition-med: 0.28s ease-out;
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Inter", sans-serif;
+      color: var(--text-main);
+      background: #02020a;
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, rgba(0, 216, 216, 0.15), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(216, 0, 216, 0.18), transparent 60%),
-        #050711;
-      color: var(--text);
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 16px;
+      align-items: stretch;
+      background-image: var(--bg-main);
+      background-attachment: fixed;
+      background-size: cover;
+      padding: 18px 14px 28px;
     }
 
-    .response-block {
+    .app-shell {
       width: 100%;
-      max-width: 1080px;
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    .glass {
+      max-width: 1120px;
+      margin: auto;
+      border-radius: 32px;
+      padding: 18px 14px 24px;
+      background: linear-gradient(
+          135deg,
+          rgba(143, 123, 255, 0.18),
+          rgba(0, 246, 255, 0.08)
+        )
+        border-box;
+      border: 1px solid rgba(155, 175, 255, 0.4);
+      box-shadow: var(--shadow-soft);
       position: relative;
-      background: linear-gradient(135deg, rgba(6, 10, 25, 0.92), rgba(10, 20, 40, 0.85));
-      border-radius: var(--radius);
-      padding: 16px;
-      border: 1px solid rgba(0, 255, 255, 0.14);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(var(--blur));
-      -webkit-backdrop-filter: blur(var(--blur));
       overflow: hidden;
     }
 
-    .glass::before {
+    .app-shell::before {
       content: "";
       position: absolute;
       inset: -40%;
       background:
-        radial-gradient(circle at 0% 0%, rgba(0,216,216,0.18), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(216,0,216,0.18), transparent 55%);
-      opacity: 0.7;
-      mix-blend-mode: soft-light;
+        radial-gradient(circle at 10% 0%, rgba(99, 64, 255, 0.16) 0, transparent 55%),
+        radial-gradient(circle at 85% 0%, rgba(0, 246, 255, 0.14) 0, transparent 50%),
+        radial-gradient(circle at 50% 95%, rgba(255, 180, 91, 0.13) 0, transparent 55%);
+      opacity: 0.85;
       pointer-events: none;
+      mix-blend-mode: screen;
     }
 
-    .glass-inner {
+    .app-inner {
       position: relative;
       z-index: 1;
     }
 
-    .btn {
-      position: relative;
-      display: inline-flex;
+    header.app-header {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 255, 255, 0.4);
-      background: radial-gradient(circle at 0% 0%, rgba(0, 216, 216, 0.35), rgba(6, 10, 25, 0.95));
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      cursor: pointer;
-      outline: none;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, .6), 0 10px 32px rgba(0, 0, 0, 0.65);
-      transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, border-color 0.16s ease-out, background 0.16s ease-out;
-      white-space: nowrap;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 6px 6px 10px;
     }
 
-    .btn::before {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-orb {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: conic-gradient(from 220deg, #ff8a5c, #ff5ce1, #7b8cff, #00f6ff, #ff8a5c);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.75),
+        0 0 28px rgba(139, 120, 255, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .brand-orb::after {
       content: "";
-      position: absolute;
-      inset: 0;
+      width: 58%;
+      height: 58%;
       border-radius: inherit;
-      background: linear-gradient(120deg, rgba(0,216,216,0.4), rgba(216,0,216,0.25));
+      background: radial-gradient(circle at 35% 25%, #fff, transparent 55%),
+        radial-gradient(circle at 60% 70%, rgba(0, 0, 0, 0.8), transparent 70%);
       mix-blend-mode: screen;
-      opacity: 0.5;
-      pointer-events: none;
+      opacity: 0.9;
     }
 
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
-      border-color: rgba(57, 255, 182, 0.9);
-      background: radial-gradient(circle at 10% 0%, rgba(57, 255, 182, 0.45), rgba(6, 10, 25, 0.98));
-    }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.9);
-    }
-
-    .btn-pill {
-      border-radius: 999px;
-    }
-
-    .btn-ghost {
-      background: transparent;
-      border-color: rgba(0, 255, 255, 0.3);
-      box-shadow: none;
-    }
-
-    .btn-ghost::before {
-      display: none;
-    }
-
-    .btn-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      flex-shrink: 0;
-    }
-
-    .btn-small {
-      padding: 7px 12px;
-      font-size: 11px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      letter-spacing: 0.09em;
+    .brand-text h1 {
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,255,255,0.4);
-      background: radial-gradient(circle at 0% 0%, rgba(0, 216, 216, 0.18), rgba(6, 10, 25, 0.95));
-      box-shadow: 0 0 18px rgba(0, 255, 255, 0.25);
-      margin-bottom: 10px;
-      white-space: nowrap;
+      margin: 0 0 2px;
     }
 
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0%, #39FFB6, rgba(0,0,0,0.2));
-      box-shadow: 0 0 12px rgba(57, 255, 182, 0.9);
-    }
-
-    .title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .title-main {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-width: 0;
-    }
-
-    .title-main h1 {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+    .brand-text p {
+      margin: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .top-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .title-main p {
-      font-size: 12px;
-      opacity: 0.8;
-    }
-
-    .ellip {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .orb {
-      position: relative;
-      width: 52px;
-      height: 52px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #ffffff, #39FFB6, #00d8d8, #d800d8);
-      box-shadow:
-        0 0 32px rgba(0, 216, 216, 0.65),
-        0 0 72px rgba(216, 0, 216, 0.75);
-      animation: pulse 2.4s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-
-    .orb::after {
-      content: "LAN";
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #050711;
-      font-weight: 800;
-      text-shadow: 0 0 8px rgba(255,255,255,0.6);
-    }
-
-    .layout-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    @media (max-width: 840px) {
-      .layout-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .title-row {
-        flex-direction: row-reverse;
-        align-items: flex-start;
-      }
-      .orb {
-        width: 46px;
-        height: 46px;
-      }
-    }
-
-    .panel {
-      position: relative;
-      border-radius: calc(var(--radius) * 0.9);
-      padding: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: radial-gradient(circle at 0% 0%, rgba(0, 216, 216, 0.12), rgba(5, 7, 17, 0.98));
-      overflow: hidden;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .panel-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      opacity: 0.85;
-    }
-
-    .panel-sub {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    .panel-body {
-      font-size: 12px;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .pill {
-      border-radius: 999px;
-      font-size: 11px;
-      padding: 4px 9px;
-      border: 1px solid rgba(0,255,255,0.3);
-      background: radial-gradient(circle at 0% 0%, rgba(0,216,216,0.12), rgba(6,10,25,0.98));
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 20% 0%, #39FFB6, rgba(0,0,0,0.4));
-    }
-
-    .device-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 260px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .device-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      background: rgba(4, 8, 22, 0.92);
-      border: 1px solid rgba(0, 255, 255, 0.12);
-    }
-
-    .device-avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #ffffff, #00d8d8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      flex-shrink: 0;
-      box-shadow: 0 0 12px rgba(0, 216, 216, 0.7);
-    }
-
-    .device-main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .device-name {
-      font-size: 12px;
-    }
-
-    .device-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
-      opacity: 0.75;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      border-radius: 999px;
-      border: 1px solid rgba(0,255,255,0.35);
-      padding: 2px 6px;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .device-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-left: 4px;
-    }
-
-    .tiny {
-      font-size: 9px;
-      opacity: 0.7;
-    }
-
-    .kbd {
-      padding: 1px 5px;
-      border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.16);
-      font-size: 9px;
-      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      background: rgba(3,5,12,0.9);
-    }
-
-    .footer-row {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 10px;
-      opacity: 0.75;
-      flex-wrap: wrap;
-    }
-
-    .arteasc {
-      white-space: pre;
-      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 9px;
-      opacity: 0.8;
-      line-height: 1.3;
-    }
-
-    /* CARD GRID – Control Center em stacks de cards */
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 10px;
     }
 
-    .card {
-      position: relative;
-      border-radius: 14px;
-      padding: 8px 9px;
-      border: 1px solid rgba(148,163,184,0.35);
-      background: radial-gradient(circle at 0% 0%, rgba(0,216,216,0.13), rgba(6,10,25,0.98));
-      box-shadow: 0 10px 28px rgba(0,0,0,0.65);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .card-title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
-    .card-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-    }
-
-    .card-sub {
-      font-size: 10px;
-      opacity: 0.75;
-    }
-
-    .card-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 12px;
-      background: radial-gradient(circle at 15% 0%, rgba(255,255,255,0.7), rgba(0,216,216,0.3), rgba(6,10,25,1));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 0 18px rgba(0,216,216,0.6);
-      overflow: hidden;
-    }
-
-    .card-icon svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .card-body {
-      font-size: 11px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field-shell {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 6px;
-      border-radius: 999px;
-      background: rgba(6,10,25,0.96);
-      border: 1px solid rgba(148,163,184,0.5);
-    }
-
-    .field-shell label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      opacity: 0.75;
-      white-space: nowrap;
-    }
-
-    .field-shell input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: var(--text);
-      font-size: 11px;
-      min-width: 0;
-    }
-
-    .card-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 2px;
-    }
-
-    .btn-chip {
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      border-width: 1px;
-    }
-
-    .btn-chip.btn-ghost {
-      box-shadow: none;
-    }
-
-    .card-footer-text {
-      font-size: 9px;
-      opacity: 0.7;
-    }
-
-    /* Overlay + iFrame padrão KOBLLUX */
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 20% 0%, rgba(0, 216, 216, 0.18), rgba(0, 0, 0, 0.94));
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      animation: fadeIn 0.18s ease-out;
-    }
-
-    .overlay.is-open {
-      display: flex;
-    }
-
-    .ifr-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 960px;
-      aspect-ratio: 16 / 10;
-      border-radius: calc(var(--radius) * 1.1);
-      overflow: hidden;
-      border: 1px solid rgba(0,255,255,0.35);
-      box-shadow:
-        0 24px 80px rgba(0,0,0,0.95),
-        0 0 48px rgba(0,255,255,0.45);
-      background: #050711;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .overlay-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+    .pill {
+      font-size: 0.72rem;
       padding: 6px 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      font-size: 11px;
-    }
-
-    .overlay-toolbar-left,
-    .overlay-toolbar-right {
-      display: flex;
+      border-radius: 999px;
+      border: 1px solid rgba(168, 186, 255, 0.45);
+      color: var(--text-soft);
+      background: radial-gradient(circle at top, #18213c, #080b1a);
+      display: inline-flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.7);
     }
 
-    .overlay-title {
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 10px;
-      opacity: 0.8;
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-strong);
+      box-shadow: 0 0 16px rgba(0, 246, 255, 0.9);
     }
 
-    .overlay-iframe {
-      flex: 1;
-      border: none;
-      width: 100%;
-      height: 100%;
-      background: #050711;
-    }
-
-    .badge-reopen {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      z-index: 998;
-      display: none;
-    }
-
-    .badge-reopen.is-visible {
+    .nav-tabs {
       display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(7, 10, 25, 0.85);
+      border: 1px solid rgba(144, 165, 255, 0.45);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.7);
     }
 
-    @keyframes fadeIn {
+    .nav-tab {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background var(--transition-med), color var(--transition-med),
+        box-shadow var(--transition-med);
+    }
+
+    .nav-tab.active {
+      background: radial-gradient(circle at top, #8f7bff, #353864);
+      color: #fdfbff;
+      box-shadow: 0 0 0 1px rgba(199, 212, 255, 0.35),
+        0 12px 26px rgba(65, 83, 185, 0.9);
+    }
+
+    /* MAIN LAYOUT */
+
+    main {
+      margin-top: 12px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeInUp 0.32s ease-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(8px);
       }
       to {
         opacity: 1;
@@ -640,672 +231,905 @@
       }
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow:
-          0 0 22px rgba(0, 216, 216, 0.5),
-          0 0 56px rgba(216, 0, 216, 0.6);
+    /* DASHBOARD (CARDS GRID) */
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.05fr;
+      grid-template-rows: auto auto;
+      gap: 16px;
+    }
+
+    .grid-left {
+      display: grid;
+      grid-template-rows: minmax(0, 1.4fr) minmax(0, 1.1fr);
+      gap: 16px;
+    }
+
+    .grid-right {
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at 0% 0%, rgba(143, 123, 255, 0.2), transparent 60%),
+        radial-gradient(circle at 120% 120%, rgba(0, 246, 255, 0.05), transparent 50%),
+        var(--card-bg);
+      border: 1px solid rgba(138, 159, 255, 0.32);
+      padding: 16px 16px 18px;
+      box-shadow: var(--shadow-small);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.09), transparent 55%);
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+      opacity: 0.76;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .card-title.main-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+    }
+
+    .card-chevron {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .card-hero-title {
+      font-size: 1.18rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin: 4px 0 2px;
+    }
+
+    .card-subtitle {
+      font-size: 0.76rem;
+      color: var(--text-soft);
+      margin-bottom: 12px;
+    }
+
+    .code-preview {
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(185, 197, 255, 0.75);
+      background: rgba(5, 6, 18, 0.98);
+      padding: 11px 12px 10px;
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
+      font-size: 0.76rem;
+      line-height: 1.4;
+      color: #f4f4ff;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .code-preview small {
+      position: absolute;
+      top: 6px;
+      right: 9px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      border: none;
+      cursor: pointer;
+      transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast), background var(--transition-fast),
+        border-color var(--transition-fast), color var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #23d366, #1bbf4f);
+      color: #021008;
+      box-shadow: 0 12px 24px rgba(15, 210, 104, 0.75);
+    }
+
+    .primary-btn .icon {
+      font-size: 1rem;
+    }
+
+    .secondary-btn {
+      background: radial-gradient(circle, #18213c, #080b1a);
+      color: var(--text-soft);
+      border: 1px solid rgba(147, 166, 255, 0.6);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .ghost-btn {
+      background: transparent;
+      border: 1px dashed rgba(138, 159, 255, 0.85);
+      color: var(--text-soft);
+      padding-inline: 10px;
+      font-size: 0.70rem;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .ghost-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.9);
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active,
+    .ghost-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.85);
+    }
+
+    .card-footer {
+      margin-top: 12px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .theme-pill {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(178, 191, 255, 0.6);
+      color: #fefefe;
+      font-size: 0.78rem;
+      font-weight: 500;
+      background:
+        radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.45), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(0, 246, 255, 0.22), transparent 55%),
+        rgba(9, 12, 32, 0.96);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-pill.secondary {
+      border-color: rgba(238, 192, 132, 0.72);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 193, 123, 0.38), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(143, 123, 255, 0.18), transparent 55%),
+        rgba(15, 11, 6, 0.95);
+      color: #ffe9cf;
+    }
+
+    .theme-pill span.label {
+      position: relative;
+      z-index: 1;
+    }
+
+    .theme-pill small {
+      font-size: 0.65rem;
+      color: rgba(227, 232, 255, 0.8);
+      display: block;
+      opacity: 0.78;
+      margin-top: 2px;
+    }
+
+    .theme-pill::before {
+      content: "";
+      position: absolute;
+      inset: -80%;
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.4), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+      transform: translate3d(-20px, -20px, 0);
+      mix-blend-mode: soft-light;
+    }
+
+    .theme-pill:hover::before {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .video-thumb {
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      background-image: radial-gradient(circle at 10% 0%, #ff8a5c 0, transparent 40%),
+        radial-gradient(circle at 100% 100%, #7b8cff 0, transparent 50%),
+        radial-gradient(circle at 50% 50%, #000 0, #050814 60%);
+      height: 120px;
+      margin-bottom: 10px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.9);
+    }
+
+    .video-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35), transparent 65%);
+      mix-blend-mode: multiply;
+    }
+
+    .video-icon-circle {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .video-icon-circle span {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #d4d7ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.68),
+        0 16px 40px rgba(0, 0, 0, 0.98);
+    }
+
+    .video-icon-circle span::before {
+      content: "";
+      display: inline-block;
+      margin-left: 2px;
+      border-style: solid;
+      border-width: 8px 0 8px 12px;
+      border-color: transparent transparent transparent #2b2761;
+    }
+
+    .list {
+      margin: 5px 0 8px;
+      padding-left: 0;
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 0;
+    }
+
+    .list li span {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .list li small {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .label {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* DETAIL SCREEN (MOBILE-LIKE) */
+
+    .phone-shell {
+      max-width: 420px;
+      margin: 0 auto;
+      border-radius: 30px;
+      padding: 18px 14px 18px;
+      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.3), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(0, 246, 255, 0.18), transparent 50%),
+        rgba(5, 6, 18, 0.96);
+      border: 1px solid rgba(161, 181, 255, 0.45);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone-shell::before {
+      content: "";
+      position: absolute;
+      inset: -35%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 138, 92, 0.3), transparent 55%),
+        radial-gradient(circle at 90% 110%, rgba(123, 140, 255, 0.2), transparent 55%);
+      opacity: 0.85;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .phone-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .phone-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .phone-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .phone-main-title {
+      font-size: 1.1rem;
+      margin: 0 0 8px;
+    }
+
+    .phone-section {
+      margin-top: 14px;
+      border-radius: 18px;
+      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.2), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(0, 246, 255, 0.18), transparent 55%),
+        rgba(6, 8, 23, 0.98);
+      border: 1px solid rgba(138, 159, 255, 0.55);
+      padding: 12px 12px 14px;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.9);
+    }
+
+    .phone-mini-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+
+    .phone-markdown-card {
+      border-radius: 18px;
+      border: 1px dashed rgba(185, 197, 255, 0.8);
+      padding: 10px 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 0.76rem;
+      line-height: 1.4;
+      background: rgba(4, 5, 14, 0.98);
+      color: #f4f4ff;
+      margin-bottom: 8px;
+    }
+
+    .badge-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(13, 17, 42, 0.98);
+      border: 1px solid rgba(173, 188, 255, 0.7);
+      color: var(--text-soft);
+      margin-top: 4px;
+    }
+
+    .badge-counter span.count {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #8f7bff, #00f6ff);
+      color: #040513;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .phone-list {
+      list-style: none;
+      margin: 6px 0 8px;
+      padding-left: 0;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .phone-list li {
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .phone-list li span {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .small-square-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      border: 1px solid rgba(145, 167, 255, 0.8);
+      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.55), transparent 60%),
+        rgba(6, 8, 23, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: #f1f1ff;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.85);
+      flex-shrink: 0;
+    }
+
+    .phone-whatsapp-btn {
+      width: 100%;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: none;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      background: linear-gradient(135deg, #23d366, #14b052);
+      color: #021006;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(8, 210, 110, 0.9);
+    }
+
+    .phone-whatsapp-btn span.icon {
+      font-size: 1rem;
+    }
+
+    .phone-whatsapp-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(8, 210, 110, 1);
+    }
+
+    .phone-whatsapp-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 26px rgba(8, 210, 110, 0.9);
+    }
+
+    .divider-label {
+      margin: 16px 0 8px;
+      border-top: 1px solid rgba(97, 108, 180, 0.65);
+      padding-top: 10px;
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    .divider-label strong {
+      color: #fff;
+    }
+
+    .phone-video-card {
+      margin-top: 4px;
+      border-radius: 18px;
+      background: radial-gradient(circle at 0 0, rgba(143, 123, 255, 0.3), transparent 55%),
+        radial-gradient(circle at 100% 120%, rgba(0, 246, 255, 0.18), transparent 55%),
+        rgba(4, 5, 14, 0.98);
+      border: 1px solid rgba(138, 159, 255, 0.7);
+      padding: 10px 10px 12px;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.96);
+    }
+
+    .phone-video-thumb {
+      border-radius: 15px;
+      height: 110px;
+      background-image: radial-gradient(circle at 0 0, #ff8a5c 0, transparent 40%),
+        radial-gradient(circle at 100% 110%, #7b8cff 0, transparent 50%),
+        radial-gradient(circle at 50% 40%, #000 0, #050814 60%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone-video-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.28), transparent 60%);
+      mix-blend-mode: multiply;
+    }
+
+    .phone-video-thumb .video-icon-circle {
+      z-index: 2;
+    }
+
+    .phone-video-caption {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 8px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 880px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto;
       }
-      50% {
-        transform: scale(1.06);
-        box-shadow:
-          0 0 30px rgba(0, 216, 216, 0.9),
-          0 0 86px rgba(216, 0, 216, 0.9);
+
+      .grid-left,
+      .grid-right {
+        grid-template-rows: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px 8px 18px;
+      }
+
+      .app-shell {
+        padding: 14px 10px 20px;
+        border-radius: 24px;
+      }
+
+      header.app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .card {
+        padding: 14px 14px 16px;
+        border-radius: 20px;
+      }
+
+      .phone-shell {
+        border-radius: 24px;
+        padding: 14px 11px 16px;
+      }
+
+      .brand-text h1 {
+        font-size: 0.98rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="response-block">
-    <div class="glass">
-      <div class="glass-inner">
-        <div class="title-row">
-          <div class="title-main">
-            <span class="badge">
-              <span class="badge-dot"></span>
-              INFODOSE LAN · PATCH
-            </span>
-            <h1>
-              Dual Brain
-              <span class="ellip">LAN Explorer · Sistema Solar Doméstico</span>
-            </h1>
-            <p class="ellip">
-              Drop-in patch para o BlueCup: scanner lógico de dispositivos, cards em stack e ponte para a Roda Viva.
-            </p>
+  <div class="app-shell">
+    <div class="app-inner">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-orb"></div>
+          <div class="brand-text">
+            <h1>Dual.Infodose</h1>
+            <p>Ativações por Markdown · Nebula Pro + Base Madeira</p>
           </div>
-          <div class="orb" aria-hidden="true"></div>
         </div>
 
-        <div class="layout-grid">
-          <!-- Painel esquerdo: scanner + lista -->
-          <section class="panel">
-            <header class="panel-header">
-              <div>
-                <div class="panel-title">LAN Explorer</div>
-                <div class="panel-sub">Planetas da tua Roda Viva Local</div>
-              </div>
-              <button class="btn btn-small btn-pill" id="btnScan">
-                <span>SCAN LAN</span>
-              </button>
-            </header>
-            <div class="panel-body">
-              <div class="pill-row">
-                <div class="pill">
-                  <span class="pill-dot"></span>
-                  <span>Auto: 192.168.0.x / 1.x</span>
+        <div class="top-actions">
+          <div class="pill">
+            <span class="pill-dot"></span>
+            <span>Modo Dark+Glass Mobile</span>
+          </div>
+
+          <div class="nav-tabs" aria-label="Trocar de tela">
+            <button class="nav-tab active" data-screen="dashboard">Painel</button>
+            <button class="nav-tab" data-screen="ativacoes">Minhas ativações</button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <!-- DASHBOARD ==================================== -->
+        <section id="screen-dashboard" class="screen active" aria-label="Painel Dual.Infodose">
+          <div class="grid">
+            <div class="grid-left">
+              <!-- MAIN CARD: DUAL.INFODOSE -->
+              <article class="card">
+                <div class="card-inner">
+                  <div class="card-title-row">
+                    <span class="card-title main-title">DUAL.INFODOSE</span>
+                    <span class="card-chevron">Ativações ▸</span>
+                  </div>
+
+                  <h2 class="card-hero-title">Meus Markdowns</h2>
+                  <p class="card-subtitle">
+                    Use pequenos textos em Markdown como ativações diárias para o seu Dual.
+                  </p>
+
+                  <div class="code-preview">
+                    <small>Exemplo</small>
+                    Oi, Dual! Estamos ativados em pulso Dual.Infodose ⚡
+                  </div>
+
+                  <button class="primary-btn">
+                    <span class="icon">💬</span>
+                    <span>Entrar no grupo do WhatsApp</span>
+                  </button>
+
+                  <div class="card-footer">
+                    <span>Toasts combinam com vídeos e áudios curtos.</span>
+                    <button class="ghost-btn">Abrir carteira de ativações</button>
+                  </div>
+                </div>
+              </article>
+
+              <!-- DOCUMENTS CARD -->
+              <article class="card">
+                <div class="card-inner">
+                  <div class="card-title-row">
+                    <span class="card-title">Meus documentos</span>
+                    <span class="card-chevron">▸</span>
+                  </div>
+
+                  <ul class="list" aria-label="Lista de documentos Markdown">
+                    <li>
+                      <span>documento.md</span>
+                      <small>Markdown vivo</small>
+                    </li>
+                    <li>
+                      <span>protocolo.md</span>
+                      <small>Fluxo 3·6·9</small>
+                    </li>
+                    <li>
+                      <span>icones.md</span>
+                      <small>Referências</small>
+                    </li>
+                  </ul>
+
+                  <button class="secondary-btn">
+                    <span>Upload de Markdown</span>
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <div class="grid-right">
+              <!-- THEMES CARD -->
+              <article class="card">
+                <div class="card-inner">
+                  <div class="card-title-row">
+                    <span class="card-title">Meus temas</span>
+                    <span class="card-chevron">▸</span>
+                  </div>
+
+                  <div class="tag-row" style="margin-top: 4px;">
+                    <button class="theme-pill" type="button">
+                      <span class="label">
+                        Nebula Pro
+                        <small>Glass + gradiente cósmico</small>
+                      </span>
+                    </button>
+                    <button class="theme-pill secondary" type="button">
+                      <span class="label">
+                        Base Madeira
+                        <small>Calor, textura e foco</small>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="card-footer">
+                    <span>Dark+Glass Mobile</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- VIDEOS CARD 1 -->
+              <article class="card">
+                <div class="card-inner">
+                  <div class="card-title-row">
+                    <span class="card-title">Meus vídeos</span>
+                    <span class="card-chevron">▸</span>
+                  </div>
+
+                  <div class="video-thumb" role="button" aria-label="Meus vídeos">
+                    <div class="video-icon-circle">
+                      <span></span>
+                    </div>
+                  </div>
+
+                  <p class="card-subtitle" style="margin-bottom: 0;">
+                    Toasts combinam com vídeos curtos e loops de foco.
+                  </p>
+                </div>
+              </article>
+
+              <!-- USE MARKDOWN FROM GROUP -->
+              <article class="card">
+                <div class="card-inner">
+                  <div class="card-title-row">
+                    <span class="card-title">Use markdown ou HTML</span>
+                    <span class="card-chevron">▸</span>
+                  </div>
+
+                  <p class="card-subtitle">
+                    Puxe as ativações prontas do grupo Dual.Infodose e personalize.
+                  </p>
+
+                  <div class="code-preview">
+                    <small>Dual.Infodose</small>
+                    Oi, Dual! Estamos ativados em pulso Dual.Infodose ⚡
+                  </div>
+
+                  <button class="secondary-btn">
+                    <span>Upload de Markdown</span>
+                  </button>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- DETAIL: MINHAS ATIVAÇÕES ===================== -->
+        <section id="screen-ativacoes" class="screen" aria-label="Minhas ativações Dual">
+          <div class="phone-shell">
+            <div class="phone-inner">
+              <div class="phone-header">
+                <div>
+                  <div class="phone-title">Dual.Infodose</div>
+                  <h2 class="phone-main-title">Minhas ativações Dual</h2>
                 </div>
                 <div class="pill">
                   <span class="pill-dot"></span>
-                  <span>Modos: TV · Termux · Impressora · Caixa</span>
+                  <span>Carteira ativa</span>
                 </div>
               </div>
 
-              <div class="device-list" id="deviceList">
-                <!-- Devices serão injetados por JS -->
+              <!-- MARKDOWN ATUAL -->
+              <section class="phone-section" aria-label="Markdown atual">
+                <div class="phone-mini-label">Markdown atual</div>
+                <div class="phone-markdown-card">
+                  Oi, Dual! Estamos ativados em pulso Dual.Infodose ⚡
+                </div>
+
+                <div class="phone-mini-label">Carteira de ativações</div>
+                <div class="badge-counter">
+                  Markdown
+                  <span class="count">2</span>
+                </div>
+              </section>
+
+              <!-- LISTA DE MARKDOWNS -->
+              <section class="phone-section" style="margin-top: 14px;">
+                <div class="phone-mini-label">Meus Markdowns</div>
+                <ul class="phone-list">
+                  <li>
+                    <span>Ativação pronta</span>
+                    <button class="small-square-btn" title="Copiar">
+                      ⧉
+                    </button>
+                  </li>
+                  <li>
+                    <span>Reset de foco</span>
+                    <button class="small-square-btn" title="Copiar">
+                      ⧉
+                    </button>
+                  </li>
+                </ul>
+
+                <button class="secondary-btn" style="width: 100%; justify-content: center; margin-top: 4px;">
+                  <span>Novo markdown</span>
+                </button>
+
+                <button class="phone-whatsapp-btn" style="margin-top: 10px;">
+                  <span class="icon">🟢</span>
+                  <span>Entrar no grupo</span>
+                </button>
+              </section>
+
+              <!-- BLOCO DE VÍDEO EXEMPLO -->
+              <div class="divider-label">
+                Um exemplo de <strong>vídeo + toasts</strong> para suas ativações:
+              </div>
+
+              <div class="phone-video-card">
+                <div class="phone-video-thumb">
+                  <div class="video-icon-circle">
+                    <span></span>
+                  </div>
+                </div>
+                <div class="phone-video-caption">
+                  Use um vídeo curto com textura Nebula Pro e rode toasts de
+                  ativações Dual por cima — perfeitos para WhatsApp, Reels ou
+                  stories.
+                </div>
               </div>
             </div>
-          </section>
-
-          <!-- Painel direito: Control Center em cards -->
-          <section class="panel">
-            <header class="panel-header">
-              <div>
-                <div class="panel-title">Control Center</div>
-                <div class="panel-sub">Cards em stack · TV · Alexa · Impressora · CDNs</div>
-              </div>
-              <button class="btn btn-small btn-ghost btn-pill" id="btnOpenActive">
-                Abrir nó ativo
-              </button>
-            </header>
-            <div class="panel-body">
-              <div class="card-grid">
-                <!-- CARD TV CONTROLLER -->
-                <article class="card card-tv">
-                  <div class="card-header">
-                    <div class="card-title-wrap">
-                      <div class="card-title">TV Controller</div>
-                      <div class="card-sub ellip">ADB via ponte Termux / Box</div>
-                    </div>
-                    <div class="card-icon">
-                      <!-- SVG controle remoto -->
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="8" y="3" width="8" height="18" rx="3" ry="3" fill="none" stroke="rgba(15,23,42,0.95)" stroke-width="1.1"></rect>
-                        <circle cx="12" cy="6.5" r="1.2" fill="rgba(56,189,248,0.9)"></circle>
-                        <circle cx="10" cy="10" r="0.9" fill="rgba(148,163,184,0.95)"></circle>
-                        <circle cx="14" cy="10" r="0.9" fill="rgba(148,163,184,0.95)"></circle>
-                        <rect x="10" y="13" width="4" height="1.4" rx="0.7" fill="rgba(148,163,184,0.95)"></rect>
-                        <rect x="10" y="16" width="4" height="1.4" rx="0.7" fill="rgba(148,163,184,0.95)"></rect>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="field-shell">
-                      <label for="tvIpInput">IP TV</label>
-                      <input id="tvIpInput" type="text" placeholder="192.168.0.20">
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn btn-small btn-chip btn-ghost" data-tv-cmd="power">⏻ Power</button>
-                      <button class="btn btn-small btn-chip btn-ghost" data-tv-cmd="volup">🔊 Vol +</button>
-                      <button class="btn btn-small btn-chip btn-ghost" data-tv-cmd="voldown">🔉 Vol −</button>
-                      <button class="btn btn-small btn-chip btn-ghost" data-tv-cmd="home">⌂ Home</button>
-                      <button class="btn btn-small btn-chip btn-ghost" data-tv-cmd="enter">⏎ OK</button>
-                    </div>
-                    <div class="card-footer-text">
-                      Ponte sugerida: <span class="kbd">/adb</span> no Termux/mini-server.
-                    </div>
-                  </div>
-                </article>
-
-                <!-- CARD ALEXA -->
-                <article class="card card-alexa">
-                  <div class="card-header">
-                    <div class="card-title-wrap">
-                      <div class="card-title">Alexa Bridge</div>
-                      <div class="card-sub ellip">Intent local · Roda Viva → Echo</div>
-                    </div>
-                    <div class="card-icon">
-                      <!-- SVG “onda Alexa” -->
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M5 7.5C6.2 6 8 5 10.1 5c2.9 0 4.5 1.8 4.5 4.4 0 3.4-2.4 5.6-4.9 5.6-1.3 0-2.3-.4-3.3-1.1.3 1.9 1.7 3.7 3.8 4.6" fill="none" stroke="rgba(56,189,248,0.95)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="field-shell">
-                      <label for="alexaIntentInput">Intent</label>
-                      <input id="alexaIntentInput" type="text" placeholder="ligar_tv_sala">
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn btn-small btn-chip btn-ghost" id="btnAlexaSend">📡 Enviar</button>
-                    </div>
-                    <div class="card-footer-text">
-                      Backend: <span class="kbd">/alexa</span> recebe <span class="kbd">{ intent }</span> e dispara Skill.
-                    </div>
-                  </div>
-                </article>
-
-                <!-- CARD IMPRESSORA -->
-                <article class="card card-printer">
-                  <div class="card-header">
-                    <div class="card-title-wrap">
-                      <div class="card-title">Impressora · PDF</div>
-                      <div class="card-sub ellip">Nó de impressão da BlueCup</div>
-                    </div>
-                    <div class="card-icon">
-                      <!-- SVG impressora -->
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="6" y="4" width="12" height="5" rx="1" ry="1" fill="none" stroke="rgba(148,163,184,0.95)" stroke-width="1.1"></rect>
-                        <rect x="5" y="9" width="14" height="7" rx="1.4" ry="1.4" fill="none" stroke="rgba(148,163,184,0.95)" stroke-width="1.1"></rect>
-                        <rect x="8" y="13" width="8" height="5" rx="0.8" ry="0.8" fill="rgba(15,23,42,0.96)" stroke="rgba(148,163,184,0.95)" stroke-width="1.1"></rect>
-                        <circle cx="8.5" cy="11" r="0.9" fill="rgba(56,189,248,0.95)"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="field-shell">
-                      <label for="printerIpInput">IP</label>
-                      <input id="printerIpInput" type="text" placeholder="192.168.0.45">
-                    </div>
-                    <div class="field-shell">
-                      <label for="printerPdfInput">PDF</label>
-                      <input id="printerPdfInput" type="text" placeholder="/docs/roda_viva.pdf">
-                    </div>
-                    <div class="card-actions">
-                      <button class="btn btn-small btn-chip btn-ghost" id="btnPrinterSend">🖨 Imprimir</button>
-                    </div>
-                    <div class="card-footer-text">
-                      Ponte: <span class="kbd">/print</span> converte URL → job (9100 / IPP).
-                    </div>
-                  </div>
-                </article>
-
-                <!-- CARD PORTAL CDNs / Apps -->
-                <article class="card card-cdn">
-                  <div class="card-header">
-                    <div class="card-title-wrap">
-                      <div class="card-title">Portal CDNs / Apps</div>
-                      <div class="card-sub ellip">Nos.S°lar · apps.json · cdn.json</div>
-                    </div>
-                    <div class="card-icon">
-                      <!-- SVG mini órbita -->
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="3" fill="rgba(56,189,248,0.95)"></circle>
-                        <circle cx="12" cy="12" r="7" fill="none" stroke="rgba(148,163,184,0.95)" stroke-width="1.1"></circle>
-                        <circle cx="17" cy="9" r="1" fill="#fff"></circle>
-                      </svg>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="card-actions">
-                      <button class="btn btn-small btn-chip btn-ghost" id="btnLoadApps">📂 apps.json</button>
-                      <button class="btn btn-small btn-chip btn-ghost" id="btnLoadCdn">🪐 cdn.json</button>
-                    </div>
-                    <div id="cdnStatus" class="card-footer-text">
-                      Aguardando leitura dos manifests locais.
-                    </div>
-                  </div>
-                </article>
-              </div>
-
-              <div style="border-top:1px dashed rgba(255,255,255,.09); margin:10px 0 6px 0;"></div>
-
-              <div class="arteasc" id="arteascBox"></div>
-            </div>
-          </section>
-        </div>
-
-        <div class="footer-row">
-          <span>
-            Patch: <span class="tiny">INFODOSE LAN Explorer · v1.1 · Cards · Kodux.Dual</span>
-          </span>
-          <span class="tiny">
-            Integra: <span class="kbd">#lan-explorer</span> · <span class="kbd">#dual-brain-cap3</span> · <span class="kbd">#control-center-cards</span>
-          </span>
-        </div>
-      </div>
+          </div>
+        </section>
+      </main>
     </div>
   </div>
-
-  <!-- Overlay + iFrame (Roda Viva / Viewer universal) -->
-  <div class="overlay" id="kobOverlay">
-    <div class="ifr-wrap" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
-      <div class="overlay-toolbar">
-        <div class="overlay-toolbar-left">
-          <span class="badge-dot"></span>
-          <span id="overlayTitle" class="overlay-title ellip">BlueCup · Nó ativo</span>
-        </div>
-        <div class="overlay-toolbar-right">
-          <span class="tiny ellip" id="overlayMeta"></span>
-          <button class="btn btn-icon btn-small btn-ghost" data-action="minimize" title="Minimizar">
-            ▾
-          </button>
-          <button class="btn btn-icon btn-small btn-ghost" data-action="maximize" title="Maximizar">
-            ⤢
-          </button>
-          <button class="btn btn-icon btn-small btn-ghost" data-action="close" title="Fechar">
-            ✕
-          </button>
-        </div>
-      </div>
-      <iframe id="kobIframe" class="overlay-iframe" src="about:blank"></iframe>
-    </div>
-  </div>
-
-  <button class="btn btn-small badge-reopen" id="badgeReopen">
-    <span class="badge-dot"></span>
-    <span>Reabrir Nó Ativo</span>
-  </button>
 
   <script>
-    // ArteASC minimal
-    window.ArteASC = {
-      render: function (name, v) {
-        var map = {
-          portal369:
-            "╔═══🌌═══╗\n" +
-            " ✪ (°ロ°)☝\n" +
-            " 🧭 " + (v && v.tri ? v.tri : "INFODOSE LAN"),
-          seal_trinity_v2:
-            "⟐ Trinity v2\n" +
-            "⚡ Pulso: " + (v && v.pulso ? v.pulso : "Roda Viva · LAN")
-        };
-        return map[name] || "[ArteASC]";
-      }
-    };
+    // Troca entre Painel e Minhas ativações
+    const tabs = document.querySelectorAll(".nav-tab");
+    const screens = document.querySelectorAll(".screen");
 
-    (function initArteASC() {
-      var box = document.getElementById("arteascBox");
-      if (!box || !window.ArteASC) return;
-      var main = window.ArteASC.render("portal369", { tri: "INFODOSE · Roda Viva LAN" });
-      var seal = window.ArteASC.render("seal_trinity_v2", { pulso: "Planetas · TV · Termux · Impressora" });
-      box.textContent = main + "\n\n" + seal;
-    })();
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.getAttribute("data-screen");
 
-    // Estado em memória
-    var KOB_LAN = {
-      devices: [],
-      activeDeviceId: null,
-      scannerEndpoint: "/lan-scan" // <- troque para o endpoint real na tua LAN
-    };
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
 
-    // Mock de dispositivos (para testar sem backend)
-    var MOCK_DEVICES = [
-      {
-        id: "tv-sala",
-        label: "TV · Sala · BlueCup Node",
-        ip: "192.168.0.20",
-        type: "TV",
-        ports: [80, 443],
-        tags: ["display", "webrtc", "dlna"],
-        url: "http://192.168.0.20",
-        status: "online"
-      },
-      {
-        id: "iphone-bluecup",
-        label: "iPhone · BlueCup PWA",
-        ip: "192.168.0.5",
-        type: "iPhone",
-        ports: [],
-        tags: ["pwa", "controller"],
-        url: "http://bluecup.local",
-        status: "online"
-      },
-      {
-        id: "termux-node",
-        label: "Termux · Nó Servidor",
-        ip: "192.168.0.33",
-        type: "Termux",
-        ports: [5500, 8080],
-        tags: ["scanner", "lan-scan", "n8n"],
-        url: "http://192.168.0.33:5500",
-        status: "online"
-      },
-      {
-        id: "printer",
-        label: "Impressora · PDF Direct",
-        ip: "192.168.0.45",
-        type: "Printer",
-        ports: [9100],
-        tags: ["print", "pdf"],
-        url: "http://192.168.0.45",
-        status: "online"
-      }
-    ];
-
-    function renderDevices() {
-      var container = document.getElementById("deviceList");
-      if (!container) return;
-      container.innerHTML = "";
-
-      if (!KOB_LAN.devices.length) {
-        var empty = document.createElement("div");
-        empty.style.fontSize = "11px";
-        empty.style.opacity = "0.75";
-        empty.textContent = "Nenhum planeta detectado ainda. Toca em SCAN LAN para começar.";
-        container.appendChild(empty);
-        return;
-      }
-
-      KOB_LAN.devices.forEach(function (d) {
-        var row = document.createElement("div");
-        row.className = "device-row";
-        row.dataset.id = d.id;
-
-        var avatar = document.createElement("div");
-        avatar.className = "device-avatar";
-        avatar.textContent = (d.type || "?").slice(0, 2).toUpperCase();
-
-        var main = document.createElement("div");
-        main.className = "device-main";
-
-        var name = document.createElement("div");
-        name.className = "device-name ellip";
-        name.textContent = d.label || d.id;
-
-        var meta = document.createElement("div");
-        meta.className = "device-meta";
-
-        var ip = document.createElement("span");
-        ip.textContent = d.ip || "0.0.0.0";
-        meta.appendChild(ip);
-
-        if (d.ports && d.ports.length) {
-          var ports = document.createElement("span");
-          ports.textContent = "∙ portas " + d.ports.join(",");
-          meta.appendChild(ports);
-        }
-
-        if (d.tags && d.tags.length) {
-          var tags = document.createElement("span");
-          tags.textContent = "∙ " + d.tags.join(" · ");
-          meta.appendChild(tags);
-        }
-
-        var status = document.createElement("span");
-        status.textContent = "∙ " + (d.status || "desconhecido");
-        meta.appendChild(status);
-
-        main.appendChild(name);
-        main.appendChild(meta);
-
-        var actions = document.createElement("div");
-        actions.className = "device-actions";
-
-        var openBtn = document.createElement("button");
-        openBtn.className = "btn btn-small btn-icon btn-ghost";
-        openBtn.innerHTML = "⤴";
-        openBtn.title = "Abrir nó em stack / iFrame";
-        openBtn.addEventListener("click", function (ev) {
-          ev.stopPropagation();
-          setActiveDevice(d.id);
-          openIFrame(d.url || ("http://" + d.ip), d.label, d);
-        });
-
-        var chip = document.createElement("span");
-        chip.className = "chip tiny";
-        chip.textContent = d.type || "NODE";
-
-        actions.appendChild(chip);
-        actions.appendChild(openBtn);
-
-        row.appendChild(avatar);
-        row.appendChild(main);
-        row.appendChild(actions);
-
-        row.addEventListener("click", function () {
-          setActiveDevice(d.id);
-        });
-
-        if (KOB_LAN.activeDeviceId === d.id) {
-          row.style.borderColor = "rgba(57,255,182,0.9)";
-          row.style.boxShadow = "0 0 18px rgba(57,255,182,0.5)";
-        }
-
-        container.appendChild(row);
-      });
-    }
-
-    function setActiveDevice(id) {
-      KOB_LAN.activeDeviceId = id;
-      renderDevices();
-      var dev = KOB_LAN.devices.find(function (d) { return d.id === id; });
-      var meta = document.getElementById("overlayMeta");
-      var title = document.getElementById("overlayTitle");
-      if (dev) {
-        if (meta) meta.textContent = dev.ip + " · " + (dev.type || "NODE");
-        if (title) title.textContent = "BlueCup · " + (dev.label || dev.id);
-      }
-    }
-
-    function scanLAN() {
-      var endpoint = KOB_LAN.scannerEndpoint;
-      var usedMock = false;
-
-      try {
-        fetch(endpoint, { method: "GET" })
-          .then(function (res) {
-            if (!res.ok) throw new Error("LAN scan HTTP " + res.status);
-            return res.json();
-          })
-          .then(function (data) {
-            if (!Array.isArray(data.devices)) {
-              throw new Error("Formato inválido: esperado { devices: [] }");
-            }
-            KOB_LAN.devices = data.devices;
-            if (!KOB_LAN.devices.length) {
-              KOB_LAN.devices = MOCK_DEVICES.slice();
-              usedMock = true;
-            }
-            if (!KOB_LAN.activeDeviceId && KOB_LAN.devices.length) {
-              KOB_LAN.activeDeviceId = KOB_LAN.devices[0].id;
-            }
-            renderDevices();
-            console.log("[INFODOSE LAN] scan via endpoint", endpoint, "mock?", usedMock);
-          })
-          .catch(function (err) {
-            console.warn("[INFODOSE LAN] falha no endpoint, usando MOCK_DEVICES:", err.message);
-            KOB_LAN.devices = MOCK_DEVICES.slice();
-            if (!KOB_LAN.activeDeviceId && KOB_LAN.devices.length) {
-              KOB_LAN.activeDeviceId = KOB_LAN.devices[0].id;
-            }
-            renderDevices();
-          });
-      } catch (e) {
-        console.warn("[INFODOSE LAN] erro inesperado no scan, caindo no mock:", e);
-        KOB_LAN.devices = MOCK_DEVICES.slice();
-        if (!KOB_LAN.activeDeviceId && KOB_LAN.devices.length) {
-          KOB_LAN.activeDeviceId = KOB_LAN.devices[0].id;
-        }
-        renderDevices();
-      }
-    }
-
-    // iFrame + Overlay (Botão Único compatível)
-    var overlay = document.getElementById("kobOverlay");
-    var iframe = document.getElementById("kobIframe");
-    var badgeReopen = document.getElementById("badgeReopen");
-
-    function openIFrame(url, title, device) {
-      if (!overlay || !iframe) return;
-      iframe.src = url || "about:blank";
-      overlay.classList.add("is-open");
-      if (badgeReopen) badgeReopen.classList.add("is-visible");
-
-      var meta = document.getElementById("overlayMeta");
-      var titleEl = document.getElementById("overlayTitle");
-      if (device && meta) {
-        meta.textContent = (device.ip || "") + (device.type ? " · " + device.type : "");
-      }
-      if (title && titleEl) {
-        titleEl.textContent = title;
-      }
-    }
-
-    function closeIFrame() {
-      if (!overlay || !iframe) return;
-      overlay.classList.remove("is-open");
-      iframe.src = "about:blank";
-    }
-
-    function minimizeIFrame() {
-      if (!overlay) return;
-      overlay.classList.remove("is-open");
-      if (badgeReopen) badgeReopen.classList.add("is-visible");
-    }
-
-    function maximizeIFrame() {
-      if (!overlay) return;
-      overlay.classList.add("is-open");
-      if (badgeReopen) badgeReopen.classList.add("is-visible");
-    }
-
-    (function initOverlayControls() {
-      if (!overlay) return;
-      overlay.addEventListener("click", function (ev) {
-        if (ev.target === overlay) {
-          closeIFrame();
-        }
-      });
-
-      var wrap = overlay.querySelector(".ifr-wrap");
-      if (!wrap) return;
-      wrap.addEventListener("click", function (ev) {
-        ev.stopPropagation();
-      });
-
-      wrap.addEventListener("click", function (ev) {
-        var action = ev.target && ev.target.getAttribute && ev.target.getAttribute("data-action");
-        if (!action) return;
-        if (action === "close") {
-          closeIFrame();
-        } else if (action === "minimize") {
-          minimizeIFrame();
-        } else if (action === "maximize") {
-          maximizeIFrame();
-        }
-      });
-
-      if (badgeReopen) {
-        badgeReopen.addEventListener("click", function () {
-          maximizeIFrame();
-        });
-      }
-
-      document.addEventListener("keydown", function (ev) {
-        if (ev.key === "Escape") {
-          closeIFrame();
-        }
-      });
-    })();
-
-    // Control Center: handlers de TV / Alexa / Impressora / CDNs (só log, você pluga fetch)
-    (function initControlCenter() {
-      var tvIpInput = document.getElementById("tvIpInput");
-      var alexaIntentInput = document.getElementById("alexaIntentInput");
-      var printerIpInput = document.getElementById("printerIpInput");
-      var printerPdfInput = document.getElementById("printerPdfInput");
-      var btnAlexaSend = document.getElementById("btnAlexaSend");
-      var btnPrinterSend = document.getElementById("btnPrinterSend");
-      var cdnStatus = document.getElementById("cdnStatus");
-      var btnLoadApps = document.getElementById("btnLoadApps");
-      var btnLoadCdn = document.getElementById("btnLoadCdn");
-
-      // TV CMD
-      document.querySelectorAll("[data-tv-cmd]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var cmd = btn.getAttribute("data-tv-cmd");
-          var ip = tvIpInput && tvIpInput.value.trim();
-          if (!ip) {
-            console.log("[TV] Defina IP da TV antes de enviar comando.");
-            return;
+        screens.forEach((screen) => {
+          if (screen.id === "screen-" + target) {
+            screen.classList.add("active");
+          } else {
+            screen.classList.remove("active");
           }
-          console.log("[TV CMD]", ip, cmd);
-          // aqui você pluga seu fetch para Termux/RPi:
-          // fetch("http://termux.lan:3000/adb", { method:"POST", body: JSON.stringify({ ip, cmd }), headers:{ "Content-Type":"application/json" } })
         });
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
-
-      // Alexa
-      if (btnAlexaSend) {
-        btnAlexaSend.addEventListener("click", function () {
-          var intent = alexaIntentInput && alexaIntentInput.value.trim();
-          if (!intent) {
-            console.log("[Alexa] Defina uma intent/skill.");
-            return;
-          }
-          console.log("[Alexa]", intent);
-          // fetch("http://termux.lan:3000/alexa", { method:"POST", body: JSON.stringify({ intent }), headers:{ "Content-Type":"application/json" } })
-        });
-      }
-
-      // Impressora
-      if (btnPrinterSend) {
-        btnPrinterSend.addEventListener("click", function () {
-          var ip = printerIpInput && printerIpInput.value.trim();
-          var pdf = printerPdfInput && printerPdfInput.value.trim();
-          if (!ip || !pdf) {
-            console.log("[Print] IP e PDF são obrigatórios.");
-            return;
-          }
-          console.log("[Print]", ip, pdf);
-          // fetch("http://termux.lan:3000/print", { method:"POST", body: JSON.stringify({ ip, pdf }), headers:{ "Content-Type":"application/json" } })
-        });
-      }
-
-      // CDNs / apps
-      function loadJson(path, label) {
-        if (!cdnStatus) return;
-        cdnStatus.textContent = "Carregando " + label + "…";
-        fetch(path)
-          .then(function (res) { return res.json(); })
-          .then(function (data) {
-            var count = Array.isArray(data) ? data.length : Object.keys(data || {}).length;
-            cdnStatus.textContent = label + " carregado de " + path + " · itens: " + count;
-            console.log("[CDN/APPS]", label, data);
-          })
-          .catch(function (err) {
-            cdnStatus.textContent = "Erro ao carregar " + label + " (" + path + ")";
-            console.warn("[CDN/APPS]", err);
-          });
-      }
-
-      if (btnLoadApps) {
-        btnLoadApps.addEventListener("click", function () {
-          loadJson("/apps/apps.json", "apps.json");
-        });
-      }
-      if (btnLoadCdn) {
-        btnLoadCdn.addEventListener("click", function () {
-          loadJson("/cdn/cdn.json", "cdn.json");
-        });
-      }
-    })();
-
-    // Botões principais
-    (function initButtons() {
-      var btnScan = document.getElementById("btnScan");
-      var btnOpenActive = document.getElementById("btnOpenActive");
-
-      if (btnScan) {
-        btnScan.addEventListener("click", function () {
-          scanLAN();
-        });
-      }
-
-      if (btnOpenActive) {
-        btnOpenActive.addEventListener("click", function () {
-          var dev = KOB_LAN.devices.find(function (d) {
-            return d.id === KOB_LAN.activeDeviceId;
-          });
-          if (!dev) return;
-          openIFrame(dev.url || ("http://" + dev.ip), dev.label, dev);
-        });
-      }
-
-      // Render inicial vazio
-      renderDevices();
-    })();
+    });
   </script>
 </body>
 </html>
