@@ -3,13 +3,15 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Dual.Infodose · Home do Dia · Hub1 Solar+IA</title>
-  <!-- PWA manifest and icons -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
-  <meta name="theme-color" content="#050816" />
+  <title>Dual.Infodose · Hub1 Solar+IA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050816" />
+
+  <!-- Manifest + ícones PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
+
   <style>
     :root{
       /* Nebula Pro + Base Madeira */
@@ -35,8 +37,8 @@
       --radius-md: 22px;
       --radius-pill: 999px;
 
-      --shadow-soft: 0 22px 60px rgba(0,0,0,0.75);
-      --shadow-pill: 0 18px 40px rgba(0,0,0,0.75);
+      --shadow-soft: 0 26px 80px rgba(0,0,0,0.9);
+      --shadow-pill: 0 22px 60px rgba(0,0,0,0.85);
 
       --gap: 14px;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -49,8 +51,13 @@
       -webkit-font-smoothing:antialiased;
       color:var(--text-main);
       background:radial-gradient(circle at top left, #14254a 0%, #050816 42%, #11070b 80%, #1c0d05 100%);
+      transition: background 420ms ease-out, color 220ms ease-out;
     }
 
+    /* moods 24h */
+    body[data-mood="madrugada"]{
+      background:radial-gradient(circle at 50% -20%, #020218 0%, #050816 45%, #050308 100%);
+    }
     body[data-mood="manha"]{
       background:radial-gradient(circle at 0% 0%, #1c3f7a 0%, #050816 46%, #1b0d05 100%);
     }
@@ -87,6 +94,27 @@
       overflow-x:hidden;
     }
 
+    @keyframes soft-orb-glow {
+      0%,100% {
+        box-shadow:0 0 14px rgba(255,176,88,0.55);
+        transform:translateY(0);
+      }
+      50% {
+        box-shadow:0 0 26px rgba(255,214,160,0.95);
+        transform:translateY(-0.5px);
+      }
+    }
+    @keyframes soft-pulse-dot {
+      0%,100% {
+        box-shadow:0 0 10px rgba(96,247,179,0.9);
+        transform:scale(1);
+      }
+      50% {
+        box-shadow:0 0 18px rgba(96,247,179,1);
+        transform:scale(1.08);
+      }
+    }
+
     .app{
       width:100%;
       max-width:430px;
@@ -97,17 +125,19 @@
       position:relative;
       overflow:hidden;
       isolation:isolate;
+      backdrop-filter:blur(18px);
+      transition:background 420ms ease-out, box-shadow 260ms ease-out, transform 220ms ease-out;
     }
     .app::before{
       content:"";
       position:absolute;
       inset:-40%;
       background:
-        radial-gradient(circle at 8% 0%, rgba(77,141,255,0.4), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(255,131,58,0.55), transparent 55%),
-        radial-gradient(circle at 50% 120%, rgba(255,230,160,0.24), transparent 55%);
-      opacity:0.75;
-      filter:blur(4px);
+        radial-gradient(circle at 8% 0%, rgba(77,141,255,0.45), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(255,131,58,0.6), transparent 60%),
+        radial-gradient(circle at 50% 120%, rgba(255,230,160,0.26), transparent 60%);
+      opacity:0.8;
+      filter:blur(10px);
       z-index:-2;
     }
     .app::after{
@@ -137,12 +167,13 @@
       letter-spacing:.18em;
       text-transform:uppercase;
       color:var(--text-soft);
+      backdrop-filter:blur(10px);
     }
     .mode-pill{
       padding:6px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.12);
-      background:linear-gradient(120deg, rgba(57,197,255,0.18), rgba(255,154,60,0.26));
+      background:linear-gradient(120deg, rgba(57,197,255,0.28), rgba(255,154,60,0.36));
       font-size:11px;
       display:inline-flex;
       align-items:center;
@@ -150,11 +181,18 @@
       color:#0b0f18;
       font-weight:600;
       cursor:pointer;
+      transition:background .2s ease-out, transform .16s ease-out, box-shadow .26s ease-out;
+      box-shadow:0 10px 25px rgba(0,0,0,0.6);
     }
     .mode-pill span.dot{
       width:7px;height:7px;border-radius:999px;
       background:var(--success);
       box-shadow:0 0 10px rgba(96,247,179,0.9);
+      animation:soft-pulse-dot 2.4s ease-in-out infinite;
+    }
+    .mode-pill:active{
+      transform:scale(0.96) translateY(1px);
+      box-shadow:0 6px 15px rgba(0,0,0,0.7);
     }
 
     .app-main{
@@ -166,18 +204,33 @@
     /* HERO */
     .hero-card{
       border-radius:var(--radius-lg);
-      background:radial-gradient(circle at top left, rgba(46,115,255,0.55), rgba(18,37,82,0.68) 40%, rgba(13,19,40,0.9) 80%);
+      background:radial-gradient(circle at top left, rgba(46,115,255,0.55), rgba(18,37,82,0.72) 40%, rgba(13,19,40,0.92) 80%);
       box-shadow:var(--shadow-pill);
       padding:16px 16px 14px;
       border:1px solid rgba(144,184,255,0.35);
       position:relative;
       overflow:hidden;
+      backdrop-filter:blur(18px);
+      transition:border-color .22s ease-out, box-shadow .22s ease-out, background .22s ease-out, transform .18s ease-out;
+    }
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:-25%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255,255,255,0.25), transparent 55%),
+        radial-gradient(circle at 120% 120%, rgba(255,164,92,0.32), transparent 55%);
+      opacity:0.32;
+      mix-blend-mode:screen;
+      pointer-events:none;
     }
     .hero-top{
       display:flex;
       align-items:center;
       justify-content:space-between;
       margin-bottom:4px;
+      position:relative;
+      z-index:1;
     }
     .hero-time{
       font-size:12px;
@@ -186,26 +239,38 @@
     }
     .hero-voice{
       width:26px;height:26px;border-radius:999px;
-      border:1px solid rgba(255,255,255,0.28);
-      background:rgba(7,12,26,0.9);
+      border:1px solid rgba(255,255,255,0.4);
+      background:radial-gradient(circle, rgba(7,12,26,0.95), rgba(2,4,12,0.95));
       display:grid;place-items:center;
       color:var(--accent-soft);
-      box-shadow:0 0 0 1px rgba(0,0,0,0.45);
+      box-shadow:0 0 0 1px rgba(0,0,0,0.65),0 10px 25px rgba(0,0,0,0.7);
       font-size:14px;
       cursor:pointer;
+      transition:transform .16s ease-out, box-shadow .2s ease-out, border-color .2s ease-out;
+    }
+    .hero-voice:active{
+      transform:scale(0.94) translateY(1px);
+      box-shadow:0 4px 14px rgba(0,0,0,0.8);
+      border-color:rgba(255,214,160,0.9);
     }
     .hero-title{
       font-size:22px;
       font-weight:700;
       margin-bottom:2px;
       letter-spacing:.03em;
+      position:relative;
+      z-index:1;
     }
     .hero-subtitle{
       font-size:13px;
       color:var(--text-soft);
+      position:relative;
+      z-index:1;
     }
     .hero-slider{
       margin-top:12px;
+      position:relative;
+      z-index:1;
     }
     .hero-slider-row{
       display:flex;
@@ -218,12 +283,13 @@
     .hero-slider-row span.label-mood{
       padding:4px 10px;
       border-radius:999px;
-      background:rgba(3,8,23,0.85);
+      background:rgba(3,8,23,0.9);
       border:1px solid rgba(255,255,255,0.18);
       font-size:11px;
       display:inline-flex;
       align-items:center;
       gap:6px;
+      backdrop-filter:blur(8px);
     }
     .label-mood i{
       width:6px;height:6px;border-radius:999px;
@@ -250,9 +316,10 @@
       height:3px;
       border-radius:999px;
       background:linear-gradient(90deg,#3ac3ff,#ffb35c);
-      transform:translateY(-50%);
+      transform:translateY(-50%) scaleX(0.5);
       transform-origin:left center;
       pointer-events:none;
+      transition:transform .18s ease-out;
     }
     .hero-range{
       position:relative;
@@ -271,6 +338,11 @@
       background:#ffd280;
       box-shadow:0 0 0 4px rgba(255,184,89,0.4);
       cursor:pointer;
+      transition:box-shadow .18s ease-out, transform .18s ease-out;
+    }
+    .hero-range:active::-webkit-slider-thumb{
+      box-shadow:0 0 0 6px rgba(255,184,89,0.6);
+      transform:scale(1.08);
     }
     .hero-range::-moz-range-thumb{
       width:18px;height:18px;border-radius:999px;border:2px solid #050814;background:#ffd280;
@@ -289,12 +361,13 @@
       border:1px solid var(--pill-border);
       box-shadow:0 12px 32px rgba(0,0,0,0.7);
       overflow:hidden;
-      transition:border-color .18s ease-out, box-shadow .18s ease-out, background .18s ease-out;
+      transition:border-color .22s ease-out, box-shadow .22s ease-out, background .22s ease-out, transform .22s ease-out;
     }
     details.stack[open]{
       border-color:rgba(255,185,104,0.7);
       background:linear-gradient(135deg, rgba(17,19,40,0.98), rgba(40,19,9,0.95));
       box-shadow:0 18px 40px rgba(0,0,0,0.9);
+      transform:translateY(-1px);
     }
     summary.stack-summary{
       list-style:none;
@@ -344,6 +417,7 @@
       color:#1b0e03;
       background:radial-gradient(circle, rgba(255,140,80,0.9), rgba(80,34,6,0.1));
       box-shadow:0 0 18px rgba(255,140,80,0.7);
+      animation:soft-orb-glow 3s ease-in-out infinite;
     }
     .stack-icon.secondary{
       background:radial-gradient(circle, rgba(143,123,255,0.9), rgba(14,21,60,0.4));
@@ -375,6 +449,16 @@
       font-size:13px;
       color:var(--text-soft);
       cursor:pointer;
+      transition:background .16s ease-out, transform .12s ease-out, box-shadow .18s ease-out, border-color .18s ease-out;
+    }
+    .panel-row:hover{
+      background:rgba(10,14,32,0.98);
+      border-color:rgba(255,185,104,0.5);
+      box-shadow:0 10px 26px rgba(0,0,0,0.7);
+    }
+    .panel-row:active{
+      transform:scale(0.98) translateY(1px);
+      box-shadow:0 4px 12px rgba(0,0,0,0.8);
     }
     .panel-row-main{
       display:flex;
@@ -398,6 +482,7 @@
       display:inline-flex;
       align-items:center;
       gap:4px;
+      backdrop-filter:blur(6px);
     }
     .panel-pill i{ font-size:12px; }
 
@@ -419,6 +504,15 @@
       gap:6px;
       color:var(--text-soft);
       cursor:pointer;
+      transition:background .16s ease-out, transform .12s ease-out, border-color .18s ease-out, box-shadow .18s ease-out;
+    }
+    .pill-grid .pill:hover{
+      background:rgba(10,14,32,0.96);
+      border-color:rgba(255,187,104,0.55);
+      box-shadow:0 10px 22px rgba(0,0,0,0.75);
+    }
+    .pill-grid .pill:active{
+      transform:scale(0.98) translateY(1px);
     }
     .pill-main{
       display:flex;
@@ -460,8 +554,8 @@
       color:var(--text-muted);
     }
 
-    .livro-viewer,
-    .solar-viewer{
+    /* VIEWERS (Nos.S°lar + Cápsulas) */
+    .viewer-shell{
       margin-top:8px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,0.16);
@@ -469,77 +563,70 @@
       padding:6px;
       max-height:340px;
       overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      transition:max-height .25s ease, border-color .25s ease, box-shadow .25s ease, background .25s ease;
     }
-    .livro-viewer iframe,
-    .solar-viewer iframe{
+    .viewer-shell.viewer-expanded{
+      max-height:80vh;
+      border-color:rgba(255,187,104,0.9);
+      box-shadow:0 20px 50px rgba(0,0,0,0.9);
+      background:radial-gradient(circle at top, rgba(255,200,120,0.14), rgba(3,6,18,0.98));
+    }
+    .viewer-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      font-size:11px;
+      color:var(--text-muted);
+    }
+    .viewer-header-title{
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+    .viewer-toggle{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.22);
+      background:radial-gradient(circle at top, rgba(255,255,255,0.12), rgba(6,9,21,0.96));
+      padding:4px 8px;
+      font-size:11px;
+      color:var(--text-soft);
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      cursor:pointer;
+      transition:background .16s ease-out, transform .12s ease-out, border-color .18s ease-out, box-shadow .18s ease-out;
+    }
+    .viewer-toggle span.icon{
+      font-size:13px;
+    }
+    .viewer-toggle:active{
+      transform:scale(0.96) translateY(1px);
+      border-color:rgba(255,187,104,0.8);
+      box-shadow:0 8px 18px rgba(0,0,0,0.8);
+    }
+    .viewer-body{
+      border-radius:12px;
+      overflow:hidden;
+    }
+    .viewer-body iframe{
       width:100%;
       height:260px;
       border:none;
       border-radius:12px;
       background:#050715;
+      transition:height .25s ease;
+    }
+    .viewer-shell.viewer-expanded .viewer-body iframe{
+      height:72vh;
     }
     .livro-empty,
     .solar-empty{
       font-size:11px;
       color:var(--text-muted);
       padding:6px 4px;
-    }
-
-    /* GERENCIADOR DE CÁPSULAS */
-    .capsule-manager{
-      margin-top:6px;
-      border-radius:12px;
-      border:1px dashed rgba(255,255,255,0.18);
-      background:rgba(4,8,20,0.95);
-      padding:6px 7px;
-      display:flex;
-      flex-direction:column;
-      gap:5px;
-    }
-    .caps-row{
-      display:flex;
-      gap:6px;
-    }
-    .caps-row input,
-    .caps-row textarea{
-      flex:1;
-      min-width:0;
-      border-radius:9px;
-      border:1px solid rgba(255,255,255,0.2);
-      background:rgba(3,6,16,0.96);
-      font-size:11px;
-      padding:4px 6px;
-      color:var(--text-soft);
-    }
-    .caps-row textarea{
-      min-height:40px;
-      max-height:72px;
-      resize:vertical;
-    }
-    .caps-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top:2px;
-    }
-    .caps-actions button{
-      flex:1 1 auto;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.22);
-      background:rgba(7,10,22,0.98);
-      font-size:10px;
-      padding:4px 6px;
-      color:var(--text-soft);
-      cursor:pointer;
-    }
-    .caps-actions button.primary{
-      background:linear-gradient(135deg,#3ac3ff,#ffb35c);
-      color:#050814;
-      font-weight:600;
-    }
-    .caps-hint{
-      font-size:10px;
-      color:var(--text-muted);
     }
 
     /* HUB SOLAR */
@@ -559,6 +646,15 @@
       flex-direction:column;
       gap:4px;
       cursor:pointer;
+      transition:background .16s ease-out, transform .12s ease-out, border-color .18s ease-out, box-shadow .18s ease-out;
+    }
+    .solar-card:hover{
+      background:rgba(10,14,32,0.98);
+      border-color:rgba(255,187,104,0.6);
+      box-shadow:0 10px 24px rgba(0,0,0,0.8);
+    }
+    .solar-card:active{
+      transform:scale(0.98) translateY(1px);
     }
     .solar-label{
       text-transform:uppercase;
@@ -576,6 +672,7 @@
       width:8px;height:8px;border-radius:999px;
       background:var(--success);
       box-shadow:0 0 10px rgba(96,247,179,0.9);
+      animation:soft-pulse-dot 2.8s ease-in-out infinite;
     }
     .solar-icon{
       font-size:13px;
@@ -795,6 +892,7 @@
       justify-content:center;
       gap:6px;
       cursor:pointer;
+      transition:background .16s ease-out, border-color .18s ease-out, box-shadow .22s ease-out, transform .16s ease-out;
     }
     .theme-chip span.dot{
       width:9px;height:9px;border-radius:999px;
@@ -807,6 +905,10 @@
       border-color:rgba(255,187,104,0.9);
       box-shadow:0 0 18px rgba(255,176,88,0.8);
       background:linear-gradient(135deg,rgba(255,169,86,0.35),rgba(13,10,4,0.98));
+      transform:translateY(-1px);
+    }
+    .theme-chip:active{
+      transform:scale(0.97) translateY(1px);
     }
 
     .hash-card{
@@ -862,6 +964,98 @@
       text-align:center;
     }
     .log strong{color:var(--accent-warm);}
+
+    /* ====== CAP/LOCAL CÁPSULAS · Gerenciador de cápsulas ====== */
+    .capsule-manager{
+      margin-top:10px;
+      padding:8px 10px;
+      border-radius:16px;
+      background:rgba(8,11,25,0.94);
+      border:1px solid rgba(171,189,255,0.24);
+      box-shadow:0 8px 20px rgba(0,0,0,0.8);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .capsule-manager .caps-row{
+      display:flex;
+    }
+
+    .capsule-manager input,
+    .capsule-manager textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:12px;
+      padding:6px 10px;
+      background:rgba(7,10,22,0.98);
+      border:1px solid rgba(171,189,255,0.24);
+      font-size:11px;
+      color:var(--text-main);
+      resize:vertical;
+      min-height:34px;
+      font-family:inherit;
+    }
+
+    .capsule-manager input::placeholder,
+    .capsule-manager textarea::placeholder{
+      color:var(--text-muted);
+    }
+
+    .capsule-manager textarea{
+      min-height:68px;
+    }
+
+    .capsule-manager .caps-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .capsule-manager .caps-actions button{
+      border:none;
+      outline:none;
+      border-radius:999px;
+      padding:5px 11px;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      cursor:pointer;
+      transition:background .16s ease-out, border-color .16s ease-out, color .16s ease-out, box-shadow .18s ease-out, transform .12s ease-out;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      box-shadow:0 6px 14px rgba(0,0,0,0.8);
+    }
+
+    .capsule-manager .caps-actions button.primary{
+      background:linear-gradient(135deg, rgba(116,182,255,0.85), rgba(255,193,146,0.85));
+      color:#050816;
+      border:1px solid rgba(255,210,150,0.9);
+    }
+
+    .capsule-manager .caps-actions button:not(.primary){
+      background:rgba(7,10,22,0.96);
+      color:var(--text-soft);
+      border:1px solid rgba(171,189,255,0.32);
+    }
+
+    .capsule-manager .caps-actions button:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 24px rgba(0,0,0,0.9);
+    }
+
+    .capsule-manager .caps-actions button:active{
+      transform:translateY(1px) scale(0.97);
+      box-shadow:0 4px 10px rgba(0,0,0,0.85);
+    }
+
+    .capsule-manager .caps-hint{
+      font-size:10px;
+      color:var(--text-muted);
+      padding-top:2px;
+    }
   </style>
 </head>
 <body data-theme="nebula">
@@ -887,14 +1081,15 @@
         </div>
         <div class="hero-slider">
           <div class="hero-slider-row">
-            <span class="hero-time">06h</span>
+            <span class="hero-time">00h</span>
             <span class="label-mood" id="moodLabel"><i></i><span>Manhã focada</span></span>
-            <span class="hero-time">17h</span>
+            <span class="hero-time">23h</span>
           </div>
           <div class="range-wrap">
             <div class="range-track"></div>
             <div class="range-fill" id="rangeFill"></div>
-            <input class="hero-range" id="timeRange" type="range" min="6" max="21" step="1" value="9" />
+            <!-- 24h -->
+            <input class="hero-range" id="timeRange" type="range" min="0" max="23" step="1" value="12" />
           </div>
         </div>
       </section>
@@ -939,7 +1134,6 @@
             </ul>
           </div>
         </details>
-        <!-- Placeholder removed: stacks moved to bottom -->
 
         <!-- Organizar dia -->
         <details class="stack">
@@ -1081,10 +1275,18 @@
               <span class="panel-pill"><i>☀️</i>Ver painel</span>
             </div>
 
-            <div class="solar-viewer" id="solarViewer">
-              <div class="solar-empty">
-                Toque em <strong>Abrir painel Nos.S°lar</strong> para carregar
-                <code>https://kodux78k.github.io/NosSolar-dualInfodose/</code> aqui dentro.
+            <div class="solar-viewer viewer-shell" id="solarViewer">
+              <div class="viewer-header">
+                <span class="viewer-header-title">Painel Nos.S°lar</span>
+                <button type="button" class="viewer-toggle" data-target="solarViewer">
+                  <span class="icon">⤢</span><span class="label">Expandir</span>
+                </button>
+              </div>
+              <div class="viewer-body" id="solarBody">
+                <div class="solar-empty">
+                  Toque em <strong>Abrir painel Nos.S°lar</strong> para carregar
+                  <code>https://kodux78k.github.io/NosSolar-dualInfodose/</code> aqui dentro.
+                </div>
               </div>
             </div>
 
@@ -1149,7 +1351,7 @@ Instruções:
         </details>
 
         <!-- Meus documentos / Corporação Cápsula -->
-        <details class="stack">
+        <details class="stack" id="stackDocs" open>
           <summary class="stack-summary">
             <div class="stack-main">
               <div class="stack-title">Meus documentos · Cápsulas</div>
@@ -1195,66 +1397,18 @@ Instruções:
               </p>
             </div>
 
-            <div class="livro-viewer" id="livroViewer">
-              <div class="livro-empty">
-                Escolha uma das cápsulas acima para abrir o app via <code>iframe</code> dentro do Hub1.
+            <div class="livro-viewer viewer-shell" id="livroViewer">
+              <div class="viewer-header">
+                <span class="viewer-header-title">Viewer de cápsulas</span>
+                <button type="button" class="viewer-toggle" data-target="livroViewer">
+                  <span class="icon">⤢</span><span class="label">Expandir</span>
+                </button>
               </div>
-            </div>
-          </div>
-        </details>
-        <!-- Design System (Guia) -->
-        <details class="stack" id="stackDesign">
-          <summary class="stack-summary">
-            <div class="stack-main">
-              <div class="stack-title">Design System</div>
-              <div class="stack-sub">Guia de tokens e componentes</div>
-            </div>
-            <div class="stack-meta">
-              <span class="stack-pill">md → HTML</span>
-              <div class="stack-icon secondary">📘</div>
-            </div>
-          </summary>
-          <div class="stack-body">
-            <div id="designContent" class="livro-viewer">
-              <div class="livro-empty">Carregando guia de design...</div>
-            </div>
-          </div>
-        </details>
-
-        <!-- Masterclass Livro Vivo -->
-        <details class="stack" id="stackMaster">
-          <summary class="stack-summary">
-            <div class="stack-main">
-              <div class="stack-title">Masterclass Livro Vivo</div>
-              <div class="stack-sub">Aula e estudo integrados</div>
-            </div>
-            <div class="stack-meta">
-              <span class="stack-pill">md → HTML</span>
-              <div class="stack-icon secondary">🎓</div>
-            </div>
-          </summary>
-          <div class="stack-body">
-            <div id="masterContent" class="livro-viewer">
-              <div class="livro-empty">Carregando masterclass...</div>
-            </div>
-          </div>
-        </details>
-
-        <!-- Nos.Solar Node 01 -->
-        <details class="stack" id="stackNode">
-          <summary class="stack-summary">
-            <div class="stack-main">
-              <div class="stack-title">Nos.Solar Node&nbsp;01</div>
-              <div class="stack-sub">Console e painel do nó local</div>
-            </div>
-            <div class="stack-meta">
-              <span class="stack-pill">iframe</span>
-              <div class="stack-icon secondary">🖥️</div>
-            </div>
-          </summary>
-          <div class="stack-body">
-            <div id="nodeViewer" class="livro-viewer">
-              <div class="livro-empty">Carregando Node&nbsp;01…</div>
+              <div class="viewer-body" id="livroBody">
+                <div class="livro-empty">
+                  Escolha uma das cápsulas acima para abrir o app via <code>iframe</code> dentro do Hub1.
+                </div>
+              </div>
             </div>
           </div>
         </details>
@@ -1402,7 +1556,7 @@ Instruções:
         }
       ];
 
-      /* ====== HERO / TEMPO ====== */
+      /* ====== HERO / TEMPO (24h) ====== */
       const timeRange = document.getElementById('timeRange');
       const rangeFill = document.getElementById('rangeFill');
       const moodSpan = document.getElementById('moodLabel').querySelector('span');
@@ -1412,11 +1566,14 @@ Instruções:
       const heroVoice = document.getElementById('heroVoice');
 
       const moodForHour = (h) => {
+        // 0–4 madrugada, 5–11 manhã, 12–17 tarde, 18–23 noite
         if(h >= 5 && h < 12) return 'manha';
-        if(h >= 12 && h < 19) return 'tarde';
-        return 'noite';
+        if(h >= 12 && h < 18) return 'tarde';
+        if(h >= 18 && h <= 23) return 'noite';
+        return 'madrugada';
       };
       const moodText = {
+        madrugada: 'Madrugada silenciosa',
         manha: 'Manhã focada',
         tarde: 'Tarde produtiva',
         noite: 'Noite tranquila'
@@ -1427,9 +1584,8 @@ Instruções:
         timeLeft.textContent = now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
       }
       function updateMood(h){
-        const span = (h - 6) / (21 - 6);
-        rangeFill.style.transform = `translateY(-50%) scaleX(${Math.max(0.05, span)})`;
-        rangeFill.style.transformOrigin = 'left center';
+        const span = h / 23; // 0–23
+        rangeFill.style.transform = `translateY(-50%) scaleX(${Math.max(0.03, span)})`;
 
         const mood = moodForHour(h);
         body.setAttribute('data-mood', mood);
@@ -1438,28 +1594,31 @@ Instruções:
         let greeting = 'Bom dia, Dual';
         if(mood === 'tarde') greeting = 'Boa tarde, Dual';
         if(mood === 'noite') greeting = 'Boa noite, Dual';
+        if(mood === 'madrugada') greeting = 'Boa madrugada, Dual';
         heroGreeting.textContent = greeting;
 
         if(mood === 'manha'){
           heroSubtitle.textContent = 'Sua dose de hoje já está organizada.';
         }else if(mood === 'tarde'){
           heroSubtitle.textContent = 'Vamos fechar a tarde com uma entrega clara.';
-        }else{
+        }else if(mood === 'noite'){
           heroSubtitle.textContent = 'Hora de desacelerar sem largar os seus 1%.';
+        }else{
+          heroSubtitle.textContent = 'Se a mente tá girando, a gente reduz pra 1% de cada vez.';
         }
       }
       function syncFromClock(){
         const now = new Date();
-        let h = now.getHours();
-        if(h < 6) h = 6;
-        if(h > 21) h = 21;
+        let h = now.getHours(); // 0–23
         timeRange.value = h;
         updateMood(h);
         updateClock();
       }
-      timeRange.addEventListener('input', (e)=>{
-        updateMood(parseInt(e.target.value, 10));
-      });
+      if(timeRange){
+        timeRange.addEventListener('input', (e)=>{
+          updateMood(parseInt(e.target.value, 10));
+        });
+      }
       syncFromClock();
       setInterval(updateClock, 60000);
 
@@ -1472,6 +1631,7 @@ Instruções:
       themeChips.forEach(chip=>{
         chip.addEventListener('click', ()=>{
           themeChips.forEach(c=>c.classList.remove('active'));
+          chip.addEventListener
           chip.classList.add('active');
           const t = chip.getAttribute('data-theme') || 'nebula';
           setTheme(t);
@@ -1630,20 +1790,45 @@ Instruções:
         });
       }
 
-      const solarViewer = document.getElementById('solarViewer');
+      const solarBody = document.getElementById('solarBody');
       const btnSolarPanel = document.getElementById('btnSolarPanel');
-      if(solarViewer && btnSolarPanel){
+      if(solarBody && btnSolarPanel){
         btnSolarPanel.addEventListener('click', ()=>{
           const url = 'https://kodux78k.github.io/NosSolar-dualInfodose/';
-          solarViewer.innerHTML = `<iframe src="${url}" loading="lazy" title="☀️ Nos.S°lar – dual.infodose"></iframe>`;
+          solarBody.innerHTML = `<iframe src="${url}" loading="lazy" title="☀️ Nos.S°lar – dual.infodose"></iframe>`;
           log('Abrindo painel Nos.S°lar no Hub Solar.');
         });
       }
 
+      /* ====== VIEWERS: botão Expandir/Reduzir ====== */
+      document.querySelectorAll('.viewer-toggle').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = btn.getAttribute('data-target');
+          const container = id ? document.getElementById(id) : null;
+          if(!container) return;
+          const expanded = container.classList.toggle('viewer-expanded');
+          const labelSpan = btn.querySelector('.label');
+          const iconSpan = btn.querySelector('.icon');
+          if(labelSpan && iconSpan){
+            if(expanded){
+              labelSpan.textContent = 'Reduzir';
+              iconSpan.textContent = '⤡';
+            }else{
+              labelSpan.textContent = 'Expandir';
+              iconSpan.textContent = '⤢';
+            }
+          }
+        });
+      });
+
       /* ====== CORPORAÇÃO CÁPSULA: appsGrid + localStorage ====== */
       const livroViewer = document.getElementById('livroViewer');
+      const livroBody = document.getElementById('livroBody');
       const appsGrid = document.getElementById('appsGrid');
+      const docsStack = document.getElementById('stackDocs');
+
       let userApps = [];
+      let appsRendered = false;
 
       function loadUserApps(){
         try{
@@ -1690,6 +1875,7 @@ Instruções:
 
       function renderApps(){
         if(!appsGrid) return;
+        appsRendered = true;
         appsGrid.innerHTML = '';
         const all = getAllApps();
         all.forEach((app, idx)=>{
@@ -1716,7 +1902,6 @@ Instruções:
           pill.addEventListener('click', (ev)=>{
             const delBtn = ev.target.closest('.pill-del');
             if(delBtn && isLocal){
-              // deletar cápsula local
               const localsStart = SEED_APPS.length;
               const overallIdx = idx;
               const localIdx = overallIdx - localsStart;
@@ -1730,11 +1915,10 @@ Instruções:
               return;
             }
 
-            // abrir no viewer
             const url = app.url;
             const title = app.title || app.key || url;
-            if(livroViewer){
-              livroViewer.innerHTML = `
+            if(livroBody){
+              livroBody.innerHTML = `
                 <iframe src="${url}" loading="lazy" title="${title}"></iframe>
               `;
             }
@@ -1743,10 +1927,30 @@ Instruções:
 
           appsGrid.appendChild(pill);
         });
+
+        // se nada selecionado ainda, mantém mensagem default
+        if(livroBody && !livroBody.querySelector('iframe')){
+          livroBody.innerHTML = `
+            <div class="livro-empty">
+              Escolha uma das cápsulas acima para abrir o app via <code>iframe</code> dentro do Hub1.
+            </div>
+          `;
+        }
       }
 
       loadUserApps();
+
+      // renderiza apps imediatamente
       renderApps();
+
+      // lazy: também renderiza quando abrir "Meus documentos" (caso não esteja open inicialmente)
+      if(docsStack){
+        docsStack.addEventListener('toggle', ()=>{
+          if(docsStack.open && !appsRendered){
+            renderApps();
+          }
+        });
+      }
 
       /* GERENCIADOR: criar, exportar, importar, limpar */
       const capTitle = document.getElementById('capTitle');
@@ -1792,7 +1996,7 @@ Instruções:
           if(!ok){
             const txt = prompt('Copie o JSON das cápsulas:', json);
             if(txt !== null){
-              // nada, só mostrar
+              // só mostrar
             }
           }
         });
@@ -1823,7 +2027,7 @@ Instruções:
           if(!confirm('Apagar todas as cápsulas locais? (Seed permanece)')) return;
           userApps = [];
           saveUserApps();
-          renderApps();
+          if(appsRendered) renderApps();
           log('Todas as cápsulas locais foram limpas.');
         });
       }
@@ -1837,7 +2041,7 @@ Instruções:
       const chatModelSelect = document.getElementById('chatModel');
       const chatSystemPrompt = document.getElementById('chatSystemPrompt');
 
-      let chatTurns = []; // só user/assistant; system vem do textarea
+      let chatTurns = [];
 
       function appendMsg(role, text){
         if(!chatMessages) return;
@@ -1854,7 +2058,6 @@ Instruções:
         return 'Você é um assistente solar simples para o Hub1.';
       }
 
-      // carrega chave/model/prompt
       try{
         const savedKey = localStorage.getItem('dual_openrouter_key');
         if(savedKey && chatKeyInput) chatKeyInput.value = savedKey;
@@ -1967,82 +2170,16 @@ Instruções:
           }
         });
       }
+
+      /* ====== REGISTRO DO SERVICE WORKER ====== */
+      if('serviceWorker' in navigator){
+        window.addEventListener('load', ()=>{
+          navigator.serviceWorker.register('./sw.js').catch((err)=>{
+            console.warn('SW falhou:', err);
+          });
+        });
+      }
     })();
-  </script>
-
-  <!-- Conversor Livro Vivo e override para converter markdown → HTML -->
-  <script src="convertLivroVivo.js"></script>
-  <script src="livro_vivo_trinity_override.js"></script>
-
-  <!-- Registro do Service Worker e carregamento das stacks extras (Design, Masterclass, Node) -->
-  <script>
-    // Registra o service worker, se suportado
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js').catch((err) => {
-          console.error('Falha ao registrar Service Worker:', err);
-        });
-      });
-    }
-
-    // Carrega um arquivo Markdown e insere o HTML convertido no contêiner fornecido
-    function loadMdToDiv(mdPath, container) {
-      if (!container) return;
-      fetch(mdPath)
-        .then((r) => r.text())
-        .then((raw) => {
-          try {
-            const html = window.convertLivroVivo ? window.convertLivroVivo(raw) : raw;
-            container.innerHTML = '<div class="md-content">' + html + '</div>';
-          } catch (e) {
-            console.warn('Erro na conversão do Markdown', e);
-            container.textContent = 'Erro ao converter markdown.';
-          }
-        })
-        .catch((err) => {
-          console.error('Erro ao carregar', mdPath, err);
-          container.textContent = 'Erro ao carregar ' + mdPath;
-        });
-    }
-
-    // Carrega o Node 01 em um iframe dentro do contêiner nodeViewer
-    function loadNode() {
-      const viewer = document.getElementById('nodeViewer');
-      if (!viewer) return;
-      viewer.innerHTML =
-        '<iframe src="node01.html" loading="lazy" title="Nos.Solar Node 01"></iframe>';
-    }
-
-    // Define eventos de abertura das pilhas extras
-    document.addEventListener('DOMContentLoaded', () => {
-      const stackDesign = document.getElementById('stackDesign');
-      const stackMaster = document.getElementById('stackMaster');
-      const stackNode = document.getElementById('stackNode');
-
-      if (stackDesign) {
-        stackDesign.addEventListener('toggle', () => {
-          if (stackDesign.open) {
-            const content = document.getElementById('designContent');
-            loadMdToDiv('README-DesignSystem-Hub1-v1.md', content);
-          }
-        });
-      }
-      if (stackMaster) {
-        stackMaster.addEventListener('toggle', () => {
-          if (stackMaster.open) {
-            const content = document.getElementById('masterContent');
-            loadMdToDiv('Livro_Vivo_Agua_Memoria_Infodose_2.md', content);
-          }
-        });
-      }
-      if (stackNode) {
-        stackNode.addEventListener('toggle', () => {
-          if (stackNode.open) {
-            loadNode();
-          }
-        });
-      }
-    });
   </script>
 </body>
 </html>
